@@ -32,9 +32,9 @@ LIVEWHALE_API_URL = "https://%s" % (SERVER_URL)
 GOOGLE_GROUPS_API_KEY = ""
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ROOT_DIR = os.path.dirname(__file__)
-ROOT_URL = "/djskeletor/"
-ROOT_URLCONF = 'djskeletor.core.urls'
-WSGI_APPLICATION = 'djskeletor.wsgi.application'
+ROOT_URL = "/djgroo/"
+ROOT_URLCONF = 'djgroo.core.urls'
+WSGI_APPLICATION = 'djgroo.wsgi.application'
 MEDIA_ROOT = ''
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 STATIC_ROOT = ''
@@ -50,7 +50,7 @@ DATABASES = {
     'default': {
         'HOST': '127.0.0.1',
         'PORT': '3306',
-        'NAME': 'django_djskeletor',
+        'NAME': 'django_djgroo',
         'ENGINE': 'django.db.backends.mysql',
         #'ENGINE': 'django.db.backends.dummy',
         'USER': '',
@@ -68,9 +68,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'djskeletor',
-    'djskeletor.core',
-    'djskeletor.myapp',
+    'djgroo',
+    'djgroo.core',
+    'djgroo.myapp',
     # needed for template tags
     'djtools',
 )
@@ -95,7 +95,7 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 TEMPLATE_DIRS = (
-    "/data2/django_projects/djskeletor/templates/",
+    "/data2/django_projects/djgroo/templates/",
     "/data2/django_templates/djkorra/",
     "/data2/django_templates/djcher/",
     "/data2/django_templates/",
@@ -114,9 +114,9 @@ CACHES = {
         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         #'LOCATION': '127.0.0.1:11211',
         #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        #'LOCATION': '/var/tmp/django_djskeletor_cache',
+        #'LOCATION': '/var/tmp/django_djgroo_cache',
         #'TIMEOUT': 60*20,
-        #'KEY_PREFIX': "DJSKELETOR_",
+        #'KEY_PREFIX': "djgroo_",
         #'OPTIONS': {
         #    'MAX_ENTRIES': 80000,
         #}
@@ -146,13 +146,13 @@ AUTHENTICATION_BACKENDS = (
     'djauth.ldapBackend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
-LOGIN_URL = '/djskeletor/accounts/login/'
-LOGIN_REDIRECT_URL = '/djskeletor/'
+LOGIN_URL = '/djgroo/accounts/login/'
+LOGIN_REDIRECT_URL = '/djgroo/'
 USE_X_FORWARDED_HOST = True
 #SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_DOMAIN=".carthage.edu"
-SESSION_COOKIE_NAME ='django_djskeletor_cookie'
+SESSION_COOKIE_NAME ='django_djgroo_cookie'
 SESSION_COOKIE_AGE = 86400
 # SMTP settings
 EMAIL_HOST = ''
@@ -214,7 +214,7 @@ LOGGING = {
         }
     },
     'loggers': {
-        'djskeletor': {
+        'djgroo': {
             'handlers':['logfile'],
             'propagate': True,
             'level':'DEBUG',
