@@ -48,15 +48,27 @@ def main():
     main function
     """
 
-    cid = "carthage.edu_gevk047lt1p3llsmmp2fe8rono@group.calendar.google.com"
+    '''
+    with open(settings.SERVICE_ACCOUNT_KEY) as f:
+        private_key = f.read()
+    credentials = SignedJwtAssertionCredentials(
+        settings.CLIENT_EMAIL, private_key,
+        scope='https://www.googleapis.com/auth/admin.directory.user',
+        sub=email
+    )
+    '''
     with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
 
         json_data = json.load(json_file)
         #print json_data
+        scope = [
+            'https://www.googleapis.com/auth/admin.directory.user',
+            'https://www.googleapis.com/auth/admin.directory.user.readonly'
+        ]
         credentials = SignedJwtAssertionCredentials(
             json_data['client_email'],
             json_data['private_key'],
-            scope='https://www.googleapis.com/auth/calendar',
+            scope='https://www.googleapis.com/auth/admin.directory.user',
             private_key_password='notasecret',
             sub=email
         )
@@ -64,21 +76,13 @@ def main():
     http = httplib2.Http()
     http = credentials.authorize(http)
 
-    service = build("calendar", "v3", http=http)
+    service = build("admin", "directory_v1", http=http)
+    results = service.users().list(
+        domain='carthage.edu', maxResults=10,
+        orderBy='email', viewType='domain_public'
+    ).execute()
 
-    page_token = None
-    while True:
-        calendar_list = service.calendarList().list(pageToken=page_token).execute()
-        for calendar_list_entry in calendar_list['items']:
-            if calendar_list_entry['id'] == cid:
-                print calendar_list_entry['summary']
-                print calendar_list_entry['description']
-                print calendar_list_entry['accessRole']
-
-        page_token = calendar_list.get('nextPageToken')
-        if not page_token:
-            break
-
+    print results
 
 ######################
 # shell command line
