@@ -10,10 +10,34 @@ import os
 
 admin.autodiscover()
 
+"""
+    url(
+        r'^oauth2-callback', 'djusagi.core.views.oauth2_callback',
+        name="oauth2_callback"
+    ),
+"""
 urlpatterns = patterns('',
-    url(r'^$', 'djusagi.plus.views.index'),
-    url(r'^oauth2callback', 'djusagi.plus.views.auth_return'),
-    # auth
+    # home
+    url(
+        r'^$', 'djusagi.core.views.home',
+        name="home"
+    ),
+    # calendar
+    url(
+        r'^calendar/$', 'djusagi.calendar.views.index',
+        name="calendar_home"
+    ),
+    # google+
+    url(
+        r'^plus/$', 'djusagi.plus.views.index',
+        name="plus_home"
+    ),
+    # OAuth2
+    url(
+        r'^oauth2-callback', 'djusagi.plus.views.auth_return',
+        name="oauth2_callback"
+    ),
+    # django auth
     url(
         r'^accounts/login',
         auth_views.login,{'template_name': 'accounts/login.html'},
