@@ -1,0 +1,150 @@
+{% extends "djdash/base.html" %}
+{% block extra_style %}
+<style>
+.bg-danger {
+    padding: 15px;
+}
+</style>
+{% endblock %}
+{% block jquery %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"
+    type="text/javascript"></script>
+{% endblock %}
+{% block navbar-header %}
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Google APIs Dashboard</a>
+</div>
+{% endblock %}
+{% block navbar-top-links %}
+    <ul class="nav navbar-top-links navbar-right">
+        {% block manager %}{% endblock %}
+        <li>
+            <a href="{% if not request.session.desktop_mode %}{% url 'responsive_switch' "go" %}{% else %}{% url 'responsive_switch' "leave" %}{% endif %}/">{% if not request.session.desktop_mode %}Go to Desktop mode{% else %}Leave Desktop mode{% endif %}</a>
+        </li>
+        <li class="dropdown user-dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-user"></i> {{user.first_name}}
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="divider"></li>
+                <li>
+                    {% if user.is_anonymous %}
+                    <a href="{% url 'auth_login' %}">
+                        <i class="fa fa-sign-in"></i> Sign In
+                    </a>
+                    {% else %}
+                    <a href="{% url 'auth_logout' %}">
+                        <i class="fa fa-sign-out"></i> Sign Out
+                    </a>
+                    {% endif %}
+                </li>
+            </ul>
+        </li>
+        <!-- /.dropdown-user -->
+    </ul>
+{% endblock %}
+{% block navbar-static-side %}
+<div class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li>
+                <a href="{% url "home" %}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-wrench fa-fw"></i> Admin SDK<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="#">Users</a>
+                    </li>
+                    <li>
+                        <a href="#">Groups</a>
+                    </li>
+                </ul>
+                <!-- /.nav-second-level -->
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-table fa-fw"></i> Calendars</a>
+            </li>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-files-o fa-fw"></i> Google API Reference<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="https://console.developers.google.com/project" target="_blank">
+                        Developers Console
+                    </a>
+                </li>
+                <li>
+                    <a href="https://admin.google.com/AdminHome?chromeless=1&fral=1" target="_blank">
+                        Admin Console
+                    </a>
+                </li>
+                <li>
+                    <a href="#" target="_blank">
+                        Admin SDK Docs  <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-third-level">
+                        <li>
+                            <a href="https://developers.google.com/admin-sdk/">Home</a>
+                        </li>
+                        <li>
+                            <a href="https://developers.google.com/admin-sdk/directory/v1/guides/manage-users">
+                                Users
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://developers.google.com/admin-sdk/directory/v1/guides/manage-groups">
+                                Groups
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://developers.google.com/admin-sdk/groups-settings/get_started">
+                                Groups Settings API
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-third-level -->
+                </li>
+                <li>
+                    <a href="https://developers.google.com/resources/api-libraries/documentation/admin/directory_v1/python/latest/" target="_blank">
+                        Python Admin Directory API
+                    </a>
+                </li>
+                <li>
+                    <a href="https://developers.google.com/admin-sdk/" target="_blank">
+                        Calendar API 
+                    </a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+    </ul>
+    <!-- /#side-menu -->
+</div>
+<!-- /.sidebar-collapse -->
+</div>
+{% endblock %}
+{% block content %}
+{% endblock content %}
+{% block extra_javascript %}
+<script>
+$(document).ready(function() {
+  $('#olvidado').click(function(e) {
+    e.preventDefault();
+    $('div#form-olvidado').toggle('500');
+  });
+  $('#acceso').click(function(e) {
+    e.preventDefault();
+    $('div#form-olvidado').toggle('500');
+  });
+});
+</script>
+{% endblock %}
