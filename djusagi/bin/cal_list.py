@@ -21,12 +21,13 @@ import argparse
 import httplib2
 
 """
-Shell script...
+Simple shell script to test the google calendar api
+and display a list of all calendars for any given user account
 """
 
 # set up command-line options
 desc = """
-Accepts as input an email address of a google domain super user
+Accepts as input an email address of a google domain user
 """
 
 parser = argparse.ArgumentParser(description=desc)
