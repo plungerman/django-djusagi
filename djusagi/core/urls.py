@@ -5,7 +5,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth import views as auth_views
 
 from djauth.views import loggedout
-
+from djtools.views.dashboard import responsive_switch
 import os
 
 admin.autodiscover()
@@ -57,6 +57,11 @@ urlpatterns = patterns('',
     ),
     url(
         r'^accounts/$', RedirectView.as_view(url=settings.ROOT_URL)
+    ),
+    # override mobile first responsive UI
+    url(
+        r'^responsive/(?P<action>[-\w]+)/',
+        'responsive_switch', name="responsive_switch"
     ),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'static')
