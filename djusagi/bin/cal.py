@@ -12,12 +12,12 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
 
+from djusagi.core.utils import get_cred, get_users
+from directory.core import FACULTY_ALPHA
+
 from googleapiclient.discovery import build
-#from apiclient.discovery import build
-from oauth2client.client import SignedJwtAssertionCredentials
 
 import argparse
-import httplib2
 
 """
 Shell script...
@@ -25,16 +25,16 @@ Shell script...
 
 # set up command-line options
 desc = """
-Accepts as input an email address of a google domain super user
+Accepts as input a calendar ID as obtained from the google api
 """
 
 parser = argparse.ArgumentParser(description=desc)
 
 parser.add_argument(
-    "-e", "--email",
+    "-c", "--cid",
     required=True,
-    help="email address of user",
-    dest="email"
+    help="Calendar ID",
+    dest="cid"
 )
 parser.add_argument(
     "--test",
@@ -43,42 +43,43 @@ parser.add_argument(
     dest="test"
 )
 
+EARL = settings.INFORMIX_EARL
+
+
 def main():
     """
-    main function
+    Cycle through the users, obtain the user's calendar list, check
+    for the calendar
     """
 
-    cid = "carthage.edu_gevk047lt1p3llsmmp2fe8rono@group.calendar.google.com"
-    with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
+    user_list = get_users(FACULTY_ALPHA)
+    cal_dict = { 'id': cid, "hidden": "False" }
+    fails = []
+    exists = []
+    inserts = 1
+    for user in user_list:
+        email = user["email"]
+        print email
+        try:
+            service = build("calendar", "v3", http=get_cred(email,"calendar"))
+            try:
+                c = service.calendarList().get(calendarId=cid).execute()
+                print "calendar already exists."
+                #service.calendarList().delete(calendarId=cid).execute()
+                exists.append(email)
+            except:
+                print "insert calendar"
+                if not test:
+                    service.calendarList().insert(body=cal_dict).execute()
+                inserts += 1
+        except:
+            print "{} is not a valid email".format(email)
+            fails.append(email)
 
-        json_data = json.load(json_file)
-        #print json_data
-        credentials = SignedJwtAssertionCredentials(
-            json_data['client_email'],
-            json_data['private_key'],
-            scope='https://www.googleapis.com/auth/calendar',
-            private_key_password='notasecret',
-            sub=email
-        )
-
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-
-    service = build("calendar", "v3", http=http)
-
-    page_token = None
-    while True:
-        calendar_list = service.calendarList().list(pageToken=page_token).execute()
-        for calendar_list_entry in calendar_list['items']:
-            if calendar_list_entry['id'] == cid:
-                print calendar_list_entry['summary']
-                print calendar_list_entry['description']
-                print calendar_list_entry['accessRole']
-
-        page_token = calendar_list.get('nextPageToken')
-        if not page_token:
-            break
-
+    print "Total number of users: {}".format(len(user_list))
+    print "Inserts = {}".format(inserts)
+    print "Already exists ({}) = {}".format(len(exists), exists)
+    print "Failures = {}".format(fails)
 
 ######################
 # shell command line
@@ -86,7 +87,7 @@ def main():
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    email = args.email
+    cid = args.cid
     test = args.test
 
     print args
