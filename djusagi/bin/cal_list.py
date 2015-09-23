@@ -43,7 +43,12 @@ def main():
     """
     main function
     """
-    service = build("calendar", "v3", http=get_cred(email,"calendar"))
+
+    credentials = get_cred(email, "calendar")
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+
+    service = build("calendar", "v3", http=http)
 
     page_token = None
     while True:

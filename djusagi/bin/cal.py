@@ -57,11 +57,15 @@ def main():
     fails = []
     exists = []
     inserts = 1
+    credentials = get_cred(email, "calendar")
+    http = httplib2.Http()
+    credentials.authorize(http)
+
     for user in user_list:
         email = user["email"]
         print email
         try:
-            service = build("calendar", "v3", http=get_cred(email,"calendar"))
+            service = build("calendar", "v3", http=http)
             try:
                 c = service.calendarList().get(calendarId=cid).execute()
                 print "calendar already exists."

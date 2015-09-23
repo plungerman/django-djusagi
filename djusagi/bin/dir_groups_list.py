@@ -42,8 +42,13 @@ def main():
     fetch all the google groups from a given domain
     """
 
+    credentials = get_cred(email, "admin.directory.group")
+
+    http = httplib2.Http()
+    credentials.authorize(http)
+
     service = build(
-        "admin", "directory_v1", http=get_cred(email, "admin.directory.group")
+        "admin", "directory_v1", http=http)
     )
 
     groups = service.groups().list(

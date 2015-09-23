@@ -12,15 +12,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
 
+from djusagi.core.utils import get_cred
+
 from googleapiclient.discovery import build
-#from apiclient.discovery import build
-from oauth2client.client import SignedJwtAssertionCredentials
 
 import argparse
 import httplib2
 
 """
-Shell script...
+Fetch all users from the Google API for a given domain
 """
 
 # set up command-line options
@@ -48,40 +48,34 @@ def main():
     main function
     """
 
-    '''
-    with open(settings.SERVICE_ACCOUNT_KEY) as f:
-        private_key = f.read()
-    credentials = SignedJwtAssertionCredentials(
-        settings.CLIENT_EMAIL, private_key,
-        scope='https://www.googleapis.com/auth/admin.directory.user',
-        sub=email
-    )
-    '''
-
-    with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
-
-        json_data = json.load(json_file)
-        if test:
-            print json_data
-        credentials = SignedJwtAssertionCredentials(
-            json_data['client_email'],
-            json_data['private_key'],
-            scope='https://www.googleapis.com/auth/admin.directory.user',
-            private_key_password='notasecret',
-            sub=email
-        )
-
+    credentials = get_cred(email, "admin.directory.user")
     http = httplib2.Http()
-    http = credentials.authorize(http)
+    credentials.authorize(http)
 
-    service = build("admin", "directory_v1", http=http)
-    results = service.users().list(
-        domain=email.split('@')[1],
-        maxResults=10,
-        orderBy='email', viewType='domain_public'
-    ).execute()
+    service = build(
+        "admin", "directory_v1", http=http)
+    )
 
-    print results
+    user_list = []
+    page_token = None
+    while True:
+        results = service.users().list(
+            domain=email.split('@')[1],
+            maxResults=500,
+            pageToken=page_token,
+            orderBy='email', viewType='domain_public'
+        ).execute()
+
+        page_token = results.get('nextPageToken')
+        user_list.append(results)
+        if not page_token:
+            break
+
+    print "length of user_list: {}".format(len(user_list))
+    for users in user_list:
+        #["users"]:
+        #print u["primaryEmail"]
+        print users
 
 ######################
 # shell command line
