@@ -14,7 +14,6 @@ from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
-from oauth2client.client import SignedJwtAssertionCredentials
 from googleapiclient.discovery import build
 
 import argparse
@@ -57,26 +56,7 @@ parser.add_argument(
     dest="test"
 )
 
-def get_auth():
-
-    # build our emailsettings credentials
-    with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
-
-        json_data = json.load(json_file)
-        if test:
-            print json_data
-        credentials = SignedJwtAssertionCredentials(
-            json_data['client_email'],
-            json_data['private_key'],
-            scope='https://apps-apis.google.com/a/feeds/emailsettings/2.0/',
-            sub=email
-        )
-
-    credentials.get_access_token()
-
-    if test:
-        print credentials.access_token
-
+def get_auth(credentials):
     # 0Auth2 Token authentication
     auth = gdata.gauth.OAuth2Token(
         credentials.client_id,#serviceEmail
@@ -96,8 +76,15 @@ def main():
 
     global username
     global email
+    global client
 
-    auth = get_auth()
+    credentials = get_cred(
+        email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+    )
+    http = httplib2.Http()
+    http = credentials.authorize(http)
+
+    auth = get_auth(credentials)
     # create our email settings client
     client = gdata.apps.emailsettings.client.EmailSettingsClient(
         domain=email.split('@')[1]
@@ -110,11 +97,14 @@ def main():
         #print forwarding.__dict__
         print forwarding.property[1].value
     else:
-        # fetch our users
+        # first we fetch all of our users: ~19000
+        users_cred = get_cred(email, "admin.directory.user")
+        http = httplib2.Http()
+        http = users_cred.authorize(http)
         service = build(
-            "admin", "directory_v1",
-            http=get_cred(email, "admin.directory.user")
+            "admin", "directory_v1", http=http
         )
+
 
         user_list = []
         page_token = None
@@ -133,7 +123,21 @@ def main():
 
         print "length of user_list: {}".format(len(user_list))
 
+        # next we cycle through all of the users and fetch their
+        # email settings, looking for forwardTo
         for users in user_list:
+            if credentials is None or credentials.invalid \
+            or credentials.access_token_expired:
+                print "get new cred"
+                credentials = get_cred(
+                    email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+                )
+                auth = get_auth(credentials)
+                # create our email settings client
+                client = gdata.apps.emailsettings.client.EmailSettingsClient(
+                    domain=email.split('@')[1]
+                )
+                auth.authorize(client)
 
             for user in users["users"]:
                 email = user["primaryEmail"]
