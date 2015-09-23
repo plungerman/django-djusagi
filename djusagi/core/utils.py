@@ -7,7 +7,6 @@ from googleapiclient.discovery import build
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import SignedJwtAssertionCredentials
 
-import httplib2
 import json
 
 EARL = settings.INFORMIX_EARL
@@ -15,34 +14,27 @@ EARL = settings.INFORMIX_EARL
 
 def get_cred(email, scope):
     """
-    Handles the communications with Google API, establishes
-    the proper credentials to access the resource, creates
-    the HTTP client, and adds it to the auth method
+    Establishes the proper credentials to access the
+    Google API resource
     """
 
-    # this did not work as well as json data
-    '''
-    with open(settings.SERVICE_ACCOUNT_KEY) as f:
-        private_key = f.read()
-    credentials = SignedJwtAssertionCredentials(
-        settings.CLIENT_EMAIL, private_key,
-        scope='https://www.googleapis.com/auth/admin.directory.user',
-        sub=email
-    )
-    '''
-
+    if scope[0:4] != "http":
+        scope='https://www.googleapis.com/auth/{}'.format(scope),
     with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
         json_data = json.load(json_file)
         credentials = SignedJwtAssertionCredentials(
             json_data['client_email'],
             json_data['private_key'],
-            scope='https://www.googleapis.com/auth/{}'.format(scope),
-            private_key_password='notasecret',
+            scope=scope,
+            access_type="offline",
+            approval_prompt = "force",
+            token_uri='https://accounts.google.com/o/oauth2/token',
             sub=email
         )
 
-    http = httplib2.Http()
-    return credentials.authorize(http)
+    credentials.get_access_token()
+
+    return credentials
 
 
 def get_flow(scope):
