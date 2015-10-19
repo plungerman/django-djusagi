@@ -12,7 +12,7 @@ import json
 EARL = settings.INFORMIX_EARL
 
 
-def get_cred(email, scope):
+def get_cred(email, scope, service_account=None):
     """
     Establishes the proper credentials to access the
     Google API resource
@@ -20,7 +20,9 @@ def get_cred(email, scope):
 
     if scope[0:4] != "http":
         scope='https://www.googleapis.com/auth/{}'.format(scope),
-    with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
+    if not service_account:
+        service_account = settings.SERVICE_ACCOUNT_JSON
+    with open(service_account) as json_file:
         json_data = json.load(json_file)
         credentials = SignedJwtAssertionCredentials(
             json_data['client_email'],
