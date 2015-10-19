@@ -26,7 +26,7 @@ import gspread
 desc = """
 Fetches a spreadsheet or creates one if it does not exist.
 Accepts as input an email address of a google domain user
-and a filename.
+and a filename. Option description is allowed.
 """
 
 parser = argparse.ArgumentParser(description=desc)
@@ -42,6 +42,12 @@ parser.add_argument(
     required=True,
     help="name of the file to manage",
     dest="filename"
+)
+parser.add_argument(
+    "-d", "--description",
+    required=False,
+    help="description of the new file if create",
+    dest="description"
 )
 parser.add_argument(
     "--test",
@@ -60,7 +66,8 @@ def main():
     scope += 'https://spreadsheets.google.com/feeds'
 
     service_account_json = os.path.join(
-        os.path.dirname(__file__), 'data_quality.json'
+        os.path.dirname(__file__),
+        settings.SERVICE_ACCOUNT_JSON
     )
     credentials = get_cred(email, scope, service_account_json)
 
@@ -75,9 +82,11 @@ def main():
         wks = gc.open(filename).sheet1
         print "opened existing file: {}".format(filename)
     except:
+        if not description:
+            description = "{}: File created from API".format(filename),
         body = {
             'title': filename,
-            'description': "TEST FILE FROM API",
+            'description': description,
             'mimeType': "application/vnd.google-apps.spreadsheet"
         }
 
@@ -96,6 +105,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     email = args.email
     filename = args.filename
+    description = args.description
     test = args.test
 
     if test:
