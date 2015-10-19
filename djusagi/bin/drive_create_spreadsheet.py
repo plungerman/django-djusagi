@@ -65,11 +65,7 @@ def main():
     scope = 'https://www.googleapis.com/auth/drive '
     scope += 'https://spreadsheets.google.com/feeds'
 
-    service_account_json = os.path.join(
-        os.path.dirname(__file__),
-        settings.SERVICE_ACCOUNT_JSON
-    )
-    credentials = get_cred(email, scope, service_account_json)
+    credentials = get_cred(email, scope, settings.SERVICE_ACCOUNT_JSON)
 
     http = httplib2.Http()
     credentials.authorize(http)
