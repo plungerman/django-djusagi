@@ -62,6 +62,8 @@ def main():
     main function
     """
 
+    global description
+
     scope = 'https://www.googleapis.com/auth/drive '
     scope += 'https://spreadsheets.google.com/feeds'
 
