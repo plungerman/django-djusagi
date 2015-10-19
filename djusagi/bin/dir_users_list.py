@@ -50,10 +50,9 @@ def main():
 
     credentials = get_cred(email, "admin.directory.user")
     http = httplib2.Http()
-    credentials.authorize(http)
 
     service = build(
-        "admin", "directory_v1", http=http)
+        "admin", "directory_v1", http=credentials.authorize(http)
     )
 
     user_list = []
