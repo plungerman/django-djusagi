@@ -60,7 +60,7 @@ def main():
     scope += 'https://spreadsheets.google.com/feeds'
 
     service_account_json = os.path.join(
-        os.path.dirname(__file__), 'data_quality-8d1cc339a418.json'
+        os.path.dirname(__file__), 'data_quality.json'
     )
     credentials = get_cred(email, scope, service_account_json)
 
