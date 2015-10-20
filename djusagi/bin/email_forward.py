@@ -78,20 +78,17 @@ def main():
     global email
     global client
 
-    credentials = get_cred(
-        email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
-    )
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-
-    auth = get_auth(credentials)
-    # create our email settings client
-    client = gdata.apps.emailsettings.client.EmailSettingsClient(
-        domain=email.split('@')[1]
-    )
-    auth.authorize(client)
-
     if username:
+        credentials = get_cred(
+            email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+        )
+        auth = get_auth(credentials)
+        # create our email settings client
+        client = gdata.apps.emailsettings.client.EmailSettingsClient(
+            domain=email.split('@')[1]
+        )
+        auth.authorize(client)
+
         forwarding = client.RetrieveForwarding(username=username)
         #print forwarding
         #print forwarding.__dict__
@@ -105,30 +102,25 @@ def main():
             "admin", "directory_v1", http=http
         )
 
-
-        user_list = []
         page_token = None
         while True:
             results = service.users().list(
                 domain=email.split('@')[1],
-                maxResults=500,
+                maxResults=10,
                 pageToken=page_token,
                 orderBy='familyName', viewType='domain_public'
             ).execute()
 
-            page_token = results.get('nextPageToken')
-            user_list.append(results)
-            if not page_token:
-                break
+            # next we cycle through all of the users and fetch their
+            # email settings, looking for forwardTo
+            #print results["users"]
+            #print "\n"
+            for user in results["users"]:
+                email = user["primaryEmail"]
+                username = email.split('@')[0]
+                given_name = user['name']['givenName']
+                family_name = user['name']['familyName']
 
-        print "length of user_list: {}".format(len(user_list))
-
-        # next we cycle through all of the users and fetch their
-        # email settings, looking for forwardTo
-        for users in user_list:
-            if credentials is None or credentials.invalid \
-            or credentials.access_token_expired:
-                print "get new cred"
                 credentials = get_cred(
                     email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
                 )
@@ -139,11 +131,6 @@ def main():
                 )
                 auth.authorize(client)
 
-            for user in users["users"]:
-                email = user["primaryEmail"]
-                username = email.split('@')[0]
-                given_name = user['name']['givenName']
-                family_name = user['name']['familyName']
                 try:
                     forwarding = client.RetrieveForwarding(username=username)
                     if forwarding.property[1].value:
@@ -156,6 +143,10 @@ def main():
                         family_name, given_name, email,
                         str(e)
                     )
+
+            page_token = results.get('nextPageToken')
+            if not page_token:
+                break
 
 ######################
 # shell command line
