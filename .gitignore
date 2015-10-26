@@ -35,6 +35,8 @@ service_account_key.json
 settings.py
 wsgi.py
 
+# storage files
+*.dat
 # misc
 *.py[cod]
 *.log
