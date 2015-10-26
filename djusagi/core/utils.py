@@ -28,8 +28,8 @@ def get_cred(email, scope, service_account=None):
             json_data['client_email'],
             json_data['private_key'],
             scope=scope,
-            access_type="offline",
-            approval_prompt = "force",
+            #access_type="offline",
+            #approval_prompt = "force",
             token_uri='https://accounts.google.com/o/oauth2/token',
             sub=email
         )
