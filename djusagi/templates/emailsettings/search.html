@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Search for a forwarding address</h1>
+            {% if forwarding %}
+                <h4>The email address</h4>
+                <blockquote>
+                    <a href="mailto:{{form.username.value}}@carthage.edu">
+                        {{form.username.value}}@carthage.edu
+                    </a>
+                </blockquote>
+                <h4>is set to forward to</h4>
+                <blockquote>
+                    <a href="mailto:{{forwarding}}">{{forwarding}}</a>
+                </blockquote>
+            {% else %}{% if form.username.value %}
+                <h4>There are no forwarding email addresses established for</h4>
+                <blockquote>
+                    <a href="mailto:{{form.username.value}}@carthage.edu">
+                        {{form.username.value}}@carthage.edu
+                    </a>
+                </blockquote>
+            {% endif %}{% endif %}
+            {% include "includes/generic_form.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

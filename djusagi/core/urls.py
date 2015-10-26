@@ -27,6 +27,10 @@ urlpatterns = patterns('',
         r'^calendar/$', 'djusagi.calendar.views.index',
         name="calendar_home"
     ),
+    # emailsettings
+    url(
+        r'^emailsettings/',  include('djusagi.emailsettings.urls')
+    ),
     # google+
     url(
         r'^plus/$', 'djusagi.plus.views.index',

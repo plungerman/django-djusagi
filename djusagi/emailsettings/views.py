@@ -1,0 +1,49 @@
+from django.conf import settings
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+
+from djusagi.core.utils import get_cred
+from djusagi.emailsettings.forms import SearchForm
+
+from djtools.decorators.auth import group_required
+
+from gdata.gauth import OAuth2TokenFromCredentials
+from gdata.apps.emailsettings.client import EmailSettingsClient
+
+@group_required(settings.ADMINISTRATORS_GROUP)
+def search(request):
+
+    forwarding = None
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+        email = settings.DOMAIN_SUPER_USER
+        # space separated list of authorized API scopes for
+        # the service account
+        scope = 'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+        # create our email settings client
+        client = EmailSettingsClient(domain=email.split('@')[1])
+        # obtain our street cred
+        credentials = get_cred(email, scope)
+        # fetch our access token
+        auth2token = OAuth2TokenFromCredentials(credentials)
+        # authorize our client
+        auth2token.authorize(client)
+        try:
+            forwarding = client.RetrieveForwarding(
+                username=cd["username"]
+            ).property[1].value
+
+        except:
+            forwarding = None
+    else:
+        form = SearchForm()
+
+    return render_to_response(
+        'emailsettings/search.html', {
+            'form': form, 'forwarding': forwarding,
+        },
+        context_instance=RequestContext(request)
+    )

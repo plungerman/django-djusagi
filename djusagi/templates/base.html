@@ -1,8 +1,13 @@
 {% extends "djdash/base.html" %}
 {% block extra_style %}
+<link href="//www.carthage.edu/themes/shared/css/forms.css"
+    rel="stylesheet" type="text/css" />
 <style>
 .bg-danger {
     padding: 15px;
+}
+.form ol li, .form ul li {
+    list-style-type: none;
 }
 </style>
 {% endblock %}
@@ -55,10 +60,16 @@
     <div class="sidebar-collapse">
         <ul class="nav" id="side-menu">
             <li>
-                <a href="{% url "home" %}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                <a href="{% url 'home' %}">
+                    <i class="fa fa-dashboard fa-fw"></i>
+                    Dashboard
+                </a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-wrench fa-fw"></i> Admin SDK<span class="fa arrow"></span></a>
+                <a href="#">
+                    <i class="fa fa-wrench fa-fw"></i>
+                    Admin SDK<span class="fa arrow"></span>
+                </a>
                 <ul class="nav nav-second-level">
                     <li>
                         <a href="#">Users</a>
@@ -70,7 +81,16 @@
                 <!-- /.nav-second-level -->
             </li>
             <li>
-                <a href="#"><i class="fa fa-table fa-fw"></i> Calendars</a>
+                <a href="{% url 'emailsettings_search' %}">
+                    <i class="fa fa-envelope  fa-fw"></i>
+                    Email Settings
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-table fa-fw"></i>
+                    Calendars
+                </a>
             </li>
             <!-- /.nav-second-level -->
         </li>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys, json
+import os, sys
 
 # env
 sys.path.append('/usr/local/lib/python2.7/dist-packages/')
@@ -11,18 +11,22 @@ sys.path.append('/data2/django_third/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
-
 from djusagi.core.utils import get_cred
 
+from oauth2client.file import Storage
 from googleapiclient.discovery import build
+from gdata.gauth import OAuth2TokenFromCredentials
+from gdata.apps.emailsettings.client import EmailSettingsClient
 
 import argparse
 import httplib2
 
 import feedparser
 import untangle
-import gdata.gauth
-import gdata.apps.emailsettings.client
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 """
 Test the google api email settings, with the end goal of displaying
@@ -56,18 +60,6 @@ parser.add_argument(
     dest="test"
 )
 
-def get_auth(credentials):
-    # 0Auth2 Token authentication
-    auth = gdata.gauth.OAuth2Token(
-        credentials.client_id,#serviceEmail
-        credentials.client_secret,#private key
-        scope='https://apps-apis.google.com/a/feeds/emailsettings/2.0/',
-        access_token=credentials.access_token,
-        refresh_token=credentials.refresh_token,
-        user_agent=credentials.user_agent
-    )
-
-    return auth
 
 def main():
     """
@@ -79,74 +71,90 @@ def main():
     global client
 
     if username:
-        credentials = get_cred(
-            email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
-        )
-        auth = get_auth(credentials)
+
+        scope = 'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+        credentials = get_cred(email, scope)
+
+        auth2token = OAuth2TokenFromCredentials(credentials)
+
         # create our email settings client
-        client = gdata.apps.emailsettings.client.EmailSettingsClient(
-            domain=email.split('@')[1]
-        )
-        auth.authorize(client)
+        client = EmailSettingsClient( domain=email.split('@')[1])
+        auth2token.authorize(client)
 
         forwarding = client.RetrieveForwarding(username=username)
+
         #print forwarding
         #print forwarding.__dict__
         print forwarding.property[1].value
     else:
-        # first we fetch all of our users: ~19000
-        users_cred = get_cred(email, "admin.directory.user")
+        # storage for credentials
+        storage = Storage(settings.STORAGE_FILE)
+        # create an http client
         http = httplib2.Http()
-        http = users_cred.authorize(http)
+        # email settings scope
+        scope = 'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
+
+        # obtain the admin directory user cred
+        users_cred = storage.get()
+        if users_cred is None or users_cred.invalid:
+            users_cred = get_cred(email, "admin.directory.user")
+            storage.put(users_cred)
+        else:
+            users_cred.refresh(http)
+
+        # build the service connection
         service = build(
-            "admin", "directory_v1", http=http
+            "admin", "directory_v1", http = users_cred.authorize(http)
         )
 
+        # fetch all of our users and put the results into a list
+        user_list = []
+        # intialize page_token
         page_token = None
         while True:
             results = service.users().list(
                 domain=email.split('@')[1],
-                maxResults=10,
+                maxResults=500,
                 pageToken=page_token,
                 orderBy='familyName', viewType='domain_public'
             ).execute()
 
-            # next we cycle through all of the users and fetch their
-            # email settings, looking for forwardTo
-            #print results["users"]
-            #print "\n"
-            for user in results["users"]:
-                email = user["primaryEmail"]
-                username = email.split('@')[0]
+            page_token = results.get('nextPageToken')
+            user_list.append(results)
+            if not page_token:
+                break
+
+        print "length of user_list: {}".format(len(user_list))
+
+        # we cycle through all of the users and fetch their
+        # email settings, looking for the forwardTo key
+        for users in user_list:
+
+            for user in users["users"]:
+                pmail = user["primaryEmail"]
+                username = pmail.split('@')[0]
                 given_name = user['name']['givenName']
                 family_name = user['name']['familyName']
-
-                credentials = get_cred(
-                    email,'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
-                )
-                auth = get_auth(credentials)
                 # create our email settings client
-                client = gdata.apps.emailsettings.client.EmailSettingsClient(
-                    domain=email.split('@')[1]
-                )
-                auth.authorize(client)
+                client = EmailSettingsClient(domain=email.split('@')[1])
+                # obtain street cred
+                credentials = get_cred(email, scope)
+                auth2token = OAuth2TokenFromCredentials(credentials)
+                auth2token.authorize(client)
 
                 try:
                     forwarding = client.RetrieveForwarding(username=username)
                     if forwarding.property[1].value:
                         print "{}|{}|{}|{}".format(
-                            family_name, given_name, email,
+                            family_name, given_name, pmail,
                             forwarding.property[1].value
                         )
                 except Exception, e:
-                    print "{}|{}|{}|{}".format(
-                        family_name, given_name, email,
+                    logger.debug("{}|{}|{}|{}".format(
+                        family_name, given_name, pmail,
                         str(e)
-                    )
+                    ))
 
-            page_token = results.get('nextPageToken')
-            if not page_token:
-                break
 
 ######################
 # shell command line
