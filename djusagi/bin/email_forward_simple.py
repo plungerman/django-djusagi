@@ -14,8 +14,6 @@ from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
-from oauth2client.client import SignedJwtAssertionCredentials
-from googleapiclient.discovery import build
 from gdata.gauth import OAuth2TokenFromCredentials
 
 import argparse
@@ -23,7 +21,6 @@ import httplib2
 
 import feedparser
 import untangle
-import gdata.apps.emailsettings.client
 
 """
 Obtain the refresh token
