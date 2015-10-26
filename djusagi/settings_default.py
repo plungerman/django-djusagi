@@ -1,6 +1,5 @@
-"""
-Django settings for project.
-"""
+#from djzbar.settings import INFORMIX_EARL_TEST as INFORMIX_EARL
+from djzbar.settings import INFORMIX_EARL
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -14,25 +13,36 @@ ADMINS = (
     ('', ''),
 )
 MANAGERS = ADMINS
-
 SECRET_KEY = ''
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS =  ['localhost','127.0.0.1']
+# Google API constants
+CLIENT_SECRETS = os.path.join(
+    os.path.dirname(__file__), 'client_secrets.json'
+)
+SERVICE_ACCOUNT_KEY = os.path.join(
+    os.path.dirname(__file__), 'service_account.p12'
+)
+SERVICE_ACCOUNT_JSON = os.path.join(
+    os.path.dirname(__file__), 'service_account.json'
+)
+STORAGE_FILE = os.path.join(
+    os.path.dirname(__file__), 'store.dat'
+)
+ADMINISTRATORS_GROUP = ''
+# internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'America/Chicago'
 SITE_ID = 1
-USE_I18N = False
+USE_I18N = True
 USE_L10N = False
 USE_TZ = False
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
 SERVER_URL = ""
-API_URL = "%s/%s" % (SERVER_URL, "api")
-LIVEWHALE_API_URL = "https://%s" % (SERVER_URL)
-GOOGLE_GROUPS_API_KEY = ""
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ROOT_DIR = os.path.dirname(__file__)
 ROOT_URL = "/djusagi/"
+REDIRECT_URI="https://{}{}oauth2-callback".format(SERVER_URL,ROOT_URL)
 ROOT_URLCONF = 'djusagi.core.urls'
 WSGI_APPLICATION = 'djusagi.wsgi.application'
 MEDIA_ROOT = ''
@@ -43,18 +53,16 @@ STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 DATABASES = {
     'default': {
         'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'django_djusagi',
-        'ENGINE': 'django.db.backends.mysql',
-        #'ENGINE': 'django.db.backends.dummy',
+        'PORT': '',
+        'NAME': '',
+        'ENGINE': '',
         'USER': '',
-        'PASSWORD': ''
+        'PASSWORD': '',
     },
 }
 
@@ -70,23 +78,18 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'djusagi',
     'djusagi.core',
-    'djusagi.myapp',
+    'djusagi.emailsettings',
+    'djusagi.plus',
     # needed for template tags
     'djtools',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # the following should be uncommented unless you are
-    # embedding your apps in iframes
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 # template stuff
@@ -95,52 +98,33 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 TEMPLATE_DIRS = (
-    "/data2/django_projects/djusagi/templates/",
-    "/data2/django_templates/djkorra/",
+    os.path.join(os.path.dirname(__file__), 'templates'),
+    "/data2/django_templates/djdash/",
     "/data2/django_templates/djcher/",
     "/data2/django_templates/",
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     "djtools.context_processors.sitevars",
+    "djusagi.context_processors.sitevars",
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.request",
     "django.core.context_processors.debug",
     "django.core.context_processors.media",
 )
-# caching
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        #'LOCATION': '127.0.0.1:11211',
-        #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        #'LOCATION': '/var/tmp/django_djusagi_cache',
-        #'TIMEOUT': 60*20,
-        #'KEY_PREFIX': "djusagi_",
-        #'OPTIONS': {
-        #    'MAX_ENTRIES': 80000,
-        #}
-    }
-}
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 # LDAP Constants
 LDAP_SERVER = ''
-LDAP_SERVER_PWM = ''
 LDAP_PORT = ''
-LDAP_PORT_PWM = ''
-LDAP_PROTOCOL = ""
-LDAP_PROTOCOL_PWM = ""
-LDAP_BASE = ""
-LDAP_USER = ""
-LDAP_PASS = ""
-LDAP_EMAIL_DOMAIN = ""
-LDAP_OBJECT_CLASS = ""
+LDAP_PROTOCOL = ''
+LDAP_BASE = ''
+LDAP_USER = ''
+LDAP_PASS = ''
+LDAP_EMAIL_DOMAIN = ''
+LDAP_OBJECT_CLASS = ''
 LDAP_OBJECT_CLASS_LIST = []
 LDAP_GROUPS = {}
 LDAP_RETURN = []
-LDAP_RETURN_PWM = []
-LDAP_ID_ATTR = ""
-LDAP_CHALLENGE_ATTR = ""
+LDAP_ID_ATTR=""
+LDAP_AUTH_USER_PK = False
 # auth backends
 AUTHENTICATION_BACKENDS = (
     'djauth.ldapBackend.LDAPBackend',
@@ -151,10 +135,9 @@ LOGOUT_URL = '{}accounts/logout/'.format(ROOT_URL)
 LOGIN_REDIRECT_URL = ROOT_URL
 PASSWORD_RESET_URL = ''
 USE_X_FORWARDED_HOST = True
-#SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_DOMAIN=".carthage.edu"
-SESSION_COOKIE_NAME ='django_djusagi_cookie'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_DOMAIN=""
+SESSION_COOKIE_NAME =''
 SESSION_COOKIE_AGE = 86400
 # SMTP settings
 EMAIL_HOST = ''
@@ -162,10 +145,11 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_FAIL_SILENTLY = False
+EMAIL_FAIL_SILENTLY = True
 DEFAULT_FROM_EMAIL = ''
 SERVER_EMAIL = ''
-SERVER_MAIL=''
+SERVER_MAIL = ''
+DOMAIN_SUPER_USER = ''
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(__file__), "logs/")
 LOG_FILENAME = LOG_FILEPATH + "debug.log"
