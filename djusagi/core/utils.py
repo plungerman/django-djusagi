@@ -8,6 +8,7 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import SignedJwtAssertionCredentials
 
 import json
+import httplib2
 
 EARL = settings.INFORMIX_EARL
 
@@ -49,10 +50,10 @@ def get_flow(scope):
     )
 
 
-def get_group(g, email):
+def get_group(g, http):
 
     service = build(
-        "groupssettings", "v1", http=get_cred(email, "apps.groups.settings")
+        "groupssettings", "v1", http=http
     )
     return service.groups().get(groupUniqueId=g["email"], alt='json').execute()
 
