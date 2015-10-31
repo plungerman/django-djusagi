@@ -1,41 +1,55 @@
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.contrib.auth.decorators import login_required
+
+from djusagi.core.utils import get_cred
+from djusagi.groups.forms import SearchForm
+
+from djtools.decorators.auth import group_required
 
 from googleapiclient.discovery import build
-from oauth2client.client import SignedJwtAssertionCredentials
+from oauth2client.file import Storage
 
 import httplib2
 
 
-@login_required
-def index(request, email=None):
+@group_required(settings.ADMINISTRATORS_GROUP)
+def search(request):
 
-    if not email:
-        email=settings.ADMINS[0][1]
-    with open(settings.SERVICE_ACCOUNT_KEY) as f:
-        private_key = f.read()
+    group = None
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            # create an http client
+            http = httplib2.Http()
+            # space separated list of authorized API scopes for
+            # the service account
+            scope = 'https://www.googleapis.com/auth/apps.groups.settings'
 
-    credentials = SignedJwtAssertionCredentials(
-        settings.CLIENT_EMAIL, private_key,
-        'https://www.googleapis.com/auth/admin.directory.user',
-        sub=email
-    )
+            cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
 
-    http = httplib2.Http()
-    http = credentials.authorize(http)
-
-    service = build("admin", "directory_v1", http=http)
-    results = service.users().list(
-        customer=email.split('@')[1], maxResults=10,
-        orderBy='email', viewType='domain_public'
-    ).execute()
-
-    users = results.get('users', [])
+            # build the groupsettings service connection
+            x = 1
+            try:
+                service = build(
+                    "groupssettings", "v1", http=cred.authorize(http)
+                )
+                group = service.groups().get(
+                    groupUniqueId=cd["email"], alt='json'
+                ).execute()
+            except Exception, e:
+                if e.resp:
+                    group = e.resp.status
+                else:
+                    group = e
+    else:
+        form = SearchForm()
 
     return render_to_response(
-        'calendar/index.html', {'users': results,},
+        'groups/search.html', {
+            'form': form, 'group': group
+        },
         context_instance=RequestContext(request)
     )
 
