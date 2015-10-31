@@ -12,7 +12,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
 
-from djusagi.core.utils import get_cred, get_users
+from djusagi.core.utils import get_cred
+from djzbar.api.hr import get_users
 from directory.core import FACULTY_ALPHA
 
 from googleapiclient.discovery import build
