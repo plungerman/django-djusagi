@@ -9,6 +9,15 @@
 .form ol li, .form ul li {
     list-style-type: none;
 }
+dl dt {
+    background-color: #ddf3f3;
+    color: #003c4b;
+    width: 100%;
+}
+dl dd {
+    margin: 2px 0 2px 5px;
+}
+.green { font-weight:bold; color:green; }
 </style>
 {% endblock %}
 {% block jquery %}
@@ -75,7 +84,7 @@
                         <a href="#">Users</a>
                     </li>
                     <li>
-                        <a href="#">Groups</a>
+                        <a href="{% url 'groups_home' %}">Groups</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->
