@@ -65,14 +65,15 @@ def main():
             orderBy='email', viewType='domain_public'
         ).execute()
 
+        for r in results["users"]:
+            user_list.append(r)
+
         page_token = results.get('nextPageToken')
-        user_list.append(results)
         if not page_token:
             break
 
     print "length of user_list: {}".format(len(user_list))
     for users in user_list:
-        #["users"]:
         #print u["primaryEmail"]
         print users
 
