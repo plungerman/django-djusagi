@@ -29,7 +29,11 @@ urlpatterns = patterns('',
     ),
     # emailsettings
     url(
-        r'^emailsettings/',  include('djusagi.emailsettings.urls')
+        r'^emailsettings/', include('djusagi.emailsettings.urls')
+    ),
+    # groups
+    url(
+        r'^groups/', include('djusagi.groups.urls')
     ),
     # google+
     url(
