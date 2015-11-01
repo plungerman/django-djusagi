@@ -12,52 +12,117 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
 
-from djusagi.core.utils import get_cred, get_group
+from djusagi.core.utils import get_cred, get_groups, get_group
 
 from googleapiclient.discovery import build
+from oauth2client.file import Storage
 
 import argparse
 import httplib2
+import datetime
+import json
 
-"""
-Display all groups from a google domain
-"""
 
 # set up command-line options
 desc = """
-Accepts as input an email address of a google domain super user
+Display all groups from a google domain
 """
 
 parser = argparse.ArgumentParser(description=desc)
-
-parser.add_argument(
-    "-e", "--email",
-    required=True,
-    help="email address of user",
-    dest="email"
-)
 
 def main():
     """
     fetch all the google groups from a given domain
     """
 
-    credentials = get_cred(email, "admin.directory.group")
-
+    print "[{}] Begin".format(datetime.datetime.today())
+    # storage for credentials
+    storage = Storage(settings.STORAGE_FILE)
+    # create an http client
     http = httplib2.Http()
-    credentials.authorize(http)
+    # scope
+    scope =  'https://www.googleapis.com/auth/admin.directory.group '
+    scope += 'https://www.googleapis.com/auth/apps.groups.settings'
 
+    # obtain the admin directory user cred
+    cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+    # build the service connection
     service = build(
-        "admin", "directory_v1", http=http)
+        "admin", "directory_v1", http=cred.authorize(http)
     )
 
-    groups = service.groups().list(
-        domain=email.split('@')[1], maxResults=10
-    ).execute()
+    group_list = get_groups(service)
 
-    for g in groups["groups"]:
-        print get_group(g, email)
+    """
+    we initialise the Http() instance within the for loop
+    in order to avoide the dreaded:
 
+    'maximum recursion depth exceeded while calling a Python object'
+
+    error, which is caused by reusing an Http() instance
+    """
+    for group in group_list:
+        # build the service and fetch the group.
+        # the build() and get() barf from time to time,
+        # hence the try/except within a loop
+        x = 1
+        while True:
+            http = httplib2.Http()
+            try:
+                service = build(
+                    "groupssettings", "v1", http=cred.authorize(http)
+                )
+                g = service.groups().get(
+                    groupUniqueId=group["email"], alt='json'
+                ).execute()
+            except Exception, e:
+                print "[{}] {}) {}".format(datetime.datetime.today(), x, e)
+                if x > 100:
+                    break
+                else:
+                    x += 1
+            else:
+                break
+
+        # build the service for fetching the group members.
+        # the build() and get() barf from time to time,
+        # hence the try/except within a loop
+        x = 1
+        while True:
+            http = httplib2.Http()
+            try:
+                service = build(
+                    "admin", "directory_v1", http=cred.authorize(http)
+                )
+                members = service.members().list(
+                    groupKey = g["email"]
+                ).execute()
+            except Exception, e:
+                print "[{}] {}) {}".format(datetime.datetime.today(), x, e)
+                if x > 100:
+                    break
+                else:
+                    x += 1
+            else:
+                break
+
+        #print(json.dumps(members, indent=4))
+        if members.get("members"):
+            for m in members.get("members"):
+                if m["role"] == "OWNER":
+                    owner_email = m["email"]
+                    break
+        else:
+            owner_email = None
+
+        print u"{}|{}|{}|{}|{}|{}|{}|{}|{}|{}".format(
+            group["name"], owner_email, g["email"], g["whoCanJoin"],
+            g["whoCanViewGroup"] , g["whoCanViewMembership"],
+            g["whoCanPostMessage"], g["membersCanPostAsTheGroup"],
+            g["whoCanContactOwner"], g["whoCanInvite"]
+        ).encode("utf-8")
+
+    print "[{}] End".format(datetime.datetime.today())
 
 ######################
 # shell command line
@@ -65,9 +130,6 @@ def main():
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    email = args.email
-
-    print args
 
     sys.exit(main())
 
