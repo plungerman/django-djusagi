@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="row">
+    <h1>Search for groups</h1>
+    <div class="col-md-6">
+        {% if group %}
+            {% if group == 500 %}
+                <p>
+                    The email address
+                    <strong class="green">{{form.email.value}}</strong>
+                    is not valid for this domain or the
+                    API failed to process the request. Please try your
+                    search again.
+                </p>
+            {% else %}{% if group == 400 %}
+                <p>
+                    The email address
+                    <strong class="green">{{form.email.value}}</strong>
+                    is not associated with an existing group.
+                </p>
+            {% else %}
+            <dl>
+            <h4 class="green">
+                Group settings for
+                {{form.email.value}}
+            </h4>
+            {% for k,v in group.items %}
+            <dt>{{k}}</dt>
+            <dd>{{v|default:"&nbsp;"}}</dd>
+            {% endfor %}
+            </dl>
+            {% endif %}{% endif %}
+        {% else %}
+            {% if form.email.value %}
+                <p>
+                    The email address
+                    <strong class="green">{{form.email.value}}</strong>
+                    is not associated with an existing group.
+                </p>
+            {% endif %}
+        {% endif %}
+        {% include "includes/generic_form.html" %}
+    </div>
+</div>
+{% endblock %}
