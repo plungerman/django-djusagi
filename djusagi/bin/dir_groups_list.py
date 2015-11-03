@@ -13,9 +13,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 from django.conf import settings
 
 from djusagi.core.utils import get_cred, get_groups, get_group
+from djusagi.adminsdk.manager.admin import AdminManager
+from djusagi.groups.manager import GroupManager
 
 from googleapiclient.discovery import build
-from oauth2client.file import Storage
 
 import argparse
 import httplib2
@@ -36,20 +37,10 @@ def main():
     """
 
     print "[{}] Begin".format(datetime.datetime.today())
-    # storage for credentials
-    storage = Storage(settings.STORAGE_FILE)
-    # create an http client
-    http = httplib2.Http()
-    # scope
-    scope =  'https://www.googleapis.com/auth/admin.directory.group '
-    scope += 'https://www.googleapis.com/auth/apps.groups.settings'
 
-    # obtain the admin directory user cred
-    cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+    am = AdminManager()
     # build the service connection
-    service = build(
-        "admin", "directory_v1", http=cred.authorize(http)
-    )
+    service = am.service()
 
     group_list = get_groups(service)
 
@@ -63,46 +54,33 @@ def main():
     """
     for group in group_list:
         # build the service and fetch the group.
-        # the build() and get() barf from time to time,
-        # hence the try/except within a loop
-        x = 1
+        # service.groups().get() barfs from time to time,
+        # hence the try/except within while a loop
+
+        gm = GroupManager()
+        service = gm.service()
+
         while True:
-            http = httplib2.Http()
             try:
-                service = build(
-                    "groupssettings", "v1", http=cred.authorize(http)
-                )
                 g = service.groups().get(
                     groupUniqueId=group["email"], alt='json'
                 ).execute()
             except Exception, e:
-                print "[{}] {}) {}".format(datetime.datetime.today(), x, e)
-                if x > 100:
-                    break
-                else:
-                    x += 1
+                print "[{}] {}".format(datetime.datetime.today(), e)
             else:
                 break
 
-        # build the service for fetching the group members.
-        # the build() and get() barf from time to time,
-        # hence the try/except within a loop
-        x = 1
+        # fetch the group members.
+        # get() barfs from time to time,
+        # hence the try/except within a while loop
         while True:
-            http = httplib2.Http()
+            service = am.service()
             try:
-                service = build(
-                    "admin", "directory_v1", http=cred.authorize(http)
-                )
                 members = service.members().list(
                     groupKey = g["email"]
                 ).execute()
             except Exception, e:
-                print "[{}] {}) {}".format(datetime.datetime.today(), x, e)
-                if x > 100:
-                    break
-                else:
-                    x += 1
+                print "[{}] {}".format(datetime.datetime.today(), e)
             else:
                 break
 
