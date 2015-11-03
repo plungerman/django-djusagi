@@ -8,7 +8,6 @@ from djusagi.groups.forms import SearchForm
 from djtools.decorators.auth import group_required
 
 from googleapiclient.discovery import build
-from oauth2client.file import Storage
 
 import httplib2
 
