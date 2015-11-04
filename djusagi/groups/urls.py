@@ -1,7 +1,4 @@
-from django.conf import settings
-from django.views.generic import RedirectView
-from django.core.urlresolvers import reverse_lazy
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('djusagi.groups.views',
     # search
@@ -10,7 +7,6 @@ urlpatterns = patterns('djusagi.groups.views',
     ),
     # home
     url(
-        r'^$', RedirectView.as_view(url=reverse_lazy('groups_search')),
-        name="groups_home"
+        r'^$', 'index', name="groups_home"
     )
 )

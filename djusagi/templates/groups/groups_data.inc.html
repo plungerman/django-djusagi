@@ -1,0 +1,58 @@
+<div class="table-responsive">
+    <table class="dataTable display table-bordered table-hover" id="groups-data">
+        <thead>
+            <tr>
+                <th><i class="fa fa-thumbs-up green" title="Status"></i></th>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Email</th>
+                <th>Who can join</th>
+                <th>Who can view group</th>
+                <th>Who can view membership</th>
+                <th>Who can post</th>
+                <th>Members can post as group</th>
+                <th>Who can contact owner</th>
+                <th>Who can invite</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for g in groups %}
+            <tr>
+                <td class="group-name" style="text-align:left;">
+                    {{g.name}}
+                </td>
+                <th>
+                    {% if g.owner %}
+                    <a href="mailto:{{g.owner}}">{{g.owner}}</a>
+                    {% endif %}
+                </th>
+                <th>
+                    <a href="mailto:{{g.email}}">{{g.email}}</a>
+                </th>
+                <td>
+                    {{g.settings.whoCanJoin}}
+                </td>
+                <td>
+                    {{g.settings.whoCanViewGroup}}
+                </td>
+                <td>
+                    {{g.settings.whoCanViewMembership}}
+                </td>
+                <td>
+                    {{g.settings.whoCanPostMessage}}
+                </td>
+                <td>
+                    {{g.settings.membersCanPostAsTheGroup}}
+                </td>
+                <td>
+                    {{g.settings.whoCanContactOwner}}
+                </td>
+                <td>
+                    {{g.settings.whoCanInvite}}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<!-- /.table-responsive -->

@@ -2,6 +2,8 @@ from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 
+from djusagi.adminsdk.manager.admin import AdminManager
+from djusagi.groups.manager import GroupManager
 from djusagi.core.utils import get_cred
 from djusagi.groups.forms import SearchForm
 
@@ -10,6 +12,35 @@ from djtools.decorators.auth import group_required
 from googleapiclient.discovery import build
 
 import httplib2
+
+
+@group_required(settings.ADMINISTRATORS_GROUP)
+def index(request):
+    """
+    Fetch and display all of the google groups from a given domain
+    """
+
+    # adminsdk manager
+    am = AdminManager()
+    # build the service connection
+    service = am.service()
+    # group settings manager
+    gm = GroupManager()
+    # retrieve all groups in the domain
+    group_list = gm.groups_list()
+    # cycle through the groups
+    for group in group_list:
+        # fetch the group settings
+        group["settings"] = gm.group_settings(group["email"])
+        # fetch the group members
+        group["members"] = gm.group_members(group["email"])
+        # fetch the group owner
+        group["owner"] = gm.group_owner(group["members"])
+
+    return render_to_response(
+        'groups/home.html', { 'groups': groups },
+        context_instance=RequestContext(request)
+    )
 
 
 @group_required(settings.ADMINISTRATORS_GROUP)
