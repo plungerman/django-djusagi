@@ -36,15 +36,15 @@ urlpatterns = patterns('',
         r'^groups/', include('djusagi.groups.urls')
     ),
     # google+
-    url(
-        r'^plus/$', 'djusagi.plus.views.index',
-        name="plus_home"
-    ),
+    #url(
+    #    r'^plus/$', 'djusagi.plus.views.index',
+    #    name="plus_home"
+    #),
     # OAuth2
-    url(
-        r'^oauth2-callback', 'djusagi.plus.views.auth_return',
-        name="oauth2_callback"
-    ),
+    #url(
+    #    r'^oauth2-callback', 'djusagi.plus.views.auth_return',
+    #    name="oauth2_callback"
+    #),
     # django auth
     url(
         r'^accounts/login',
