@@ -2,7 +2,6 @@
     <table class="dataTable display table-bordered table-hover" id="groups-data">
         <thead>
             <tr>
-                <th><i class="fa fa-thumbs-up green" title="Status"></i></th>
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Email</th>
@@ -23,7 +22,7 @@
                 </td>
                 <th>
                     {% if g.owner %}
-                    <a href="mailto:{{g.owner}}">{{g.owner}}</a>
+                    <a href="mailto:{{g.owner.email}}">{{g.owner.email}}</a>
                     {% endif %}
                 </th>
                 <th>
