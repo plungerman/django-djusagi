@@ -18,10 +18,6 @@ def main():
     Fetch and display all of the google groups from a given domain
     """
 
-    # adminsdk manager
-    am = AdminManager()
-    # build the service connection
-    service = am.service()
     # group settings manager
     gm = GroupManager()
     # retrieve all groups in the domain
