@@ -38,7 +38,7 @@ def index(request):
         group["owner"] = gm.group_owner(group["members"])
 
     return render_to_response(
-        'groups/home.html', { 'groups': groups },
+        'groups/home.html', { 'groups': group_list },
         context_instance=RequestContext(request)
     )
 
