@@ -74,7 +74,7 @@
             top: '50px', // Top position relative to parent in px
             left: 'auto' // Left position relative to parent in px
         };
-        var target = document.getElementById("students-data-panel");
+        var target = document.getElementById("groups-data-panel");
         var spinner = new Spinner(opts).spin(target);
         spinner.stop(target);
 
@@ -95,7 +95,7 @@
                     },
                 ],
             },
-            "order": [[ 1, "asc" ]],
+            "order": [[ 0, "asc" ]],
             "lengthMenu": [
                 [100, 250, 500, 1000, 2000, -1],
                 [100, 250, 500, 1000, 2000, "All"]
@@ -120,11 +120,13 @@
         <div class="col-lg-12">
             <h1 class="page-header">
                 Groups List
+                <!--
                 <small>
                     <span class="minor">Lavender rows are open access groups</span>
                     <i class="fa fa-star green"></i> = No owner
                     <br>Click on a row to highlight it for easy viewing.
                 </small>
+                -->
             </h1>
         </div>
         <!-- /.col-lg-12 -->
@@ -132,9 +134,10 @@
     <!-- /.row -->
     <div class="row">
         <div class="col-lg-12">
+            <!--
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <form id="students-toggle" class="form-inline"
+                    <form id="groups-toggle" class="form-inline"
                         role="form">
                         {% csrf_token %}
                         <div class="form-group">
@@ -165,7 +168,7 @@
                         </div>
                     </form>
                 </div>
-                <!-- /.panel-heading -->
+                /.panel-heading -->
                 <div class="panel-body" id="groups-data-panel">
                     {% include "groups/groups_data.inc.html" %}
                 </div>
