@@ -109,8 +109,8 @@
                 $(this).addClass('selected');
             }
         });
-        {% if not students and not student %}
-            alert("There was a problem fetching the student data.\nPlease reload the page or try your search again.");
+        {% if not groups %}
+            alert("There was a problem fetching the groups data.\nPlease reload the page or try your search again.");
         {% endif %}
     });
     </script>
