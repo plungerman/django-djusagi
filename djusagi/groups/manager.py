@@ -30,11 +30,12 @@ class GroupManager(object):
 
         return service
 
-    def groups_list():
+    def groups_list(self):
         """
-        returns all groups in the domain
+        returns all groups in the domain using the adminsdk api.
         """
-        groups = cache.get("admin_sdk_groups_list")
+        key = "admin_sdk_groups_list"
+        groups = cache.get(key)
         if not groups:
             groups = []
             page_token = None
@@ -55,45 +56,58 @@ class GroupManager(object):
                 if not page_token:
                     break
             # set cache to expire after 24 hours
-            cache.set("admin_sdk_groups_list", groups, 60*60*24)
-
+            cache.set(key, groups, 60*60*24)
         return groups
 
-    def group_settings(email):
-
-        service = self.group_settings_service()
-        while True:
-            try:
-                gs = service.groups().get(
-                    groupUniqueId = email, alt='json'
-                ).execute()
-            except Exception, e:
-                pass
-            else:
-                break
-
+    def group_settings(self, email):
+        """
+        retrieves a group's settings from the groups settings api.
+        """
+        key = "group_settings_{}".format(email)
+        gs = cache.get(key)
+        if not gs:
+            service = self.service()
+            while True:
+                try:
+                    gs = service.groups().get(
+                        groupUniqueId = email, alt='json'
+                    ).execute()
+                except Exception, e:
+                    pass
+                else:
+                    break
+            cache.set(key, gs)
         return gs
 
-    def group_members(email):
-        service = self.admin_sdk_service()
-        while True:
-            try:
-                members = service.members().list(
-                    groupKey = email, alt='json'
-                ).execute()
-            except Exception, e:
-                pass
-            else:
-                break
-
+    def group_members(self, email):
+        """
+        retrieves a group's member list from the admin sdk api.
+        """
+        key = "group_members_{}".format(email)
+        members = cache.get(key)
+        if not members:
+            am = AdminManager()
+            service = am.service()
+            while True:
+                try:
+                    members = service.members().list(
+                        groupKey = email, alt='json'
+                    ).execute()
+                except Exception, e:
+                    pass
+                else:
+                    break
+            cache.set(key, members)
         return members
 
-    def group_owner(members):
+    def group_owner(self, members):
+        """
+        retrieves the owner of a group from the list of group members.
+        """
+        owner = None
         if members.get("members"):
             for m in members.get("members"):
                 if m["role"] == "OWNER":
                     owner = m
                     break
-        else:
-            owner = None
         return owner
