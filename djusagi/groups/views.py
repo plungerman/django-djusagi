@@ -20,10 +20,6 @@ def index(request):
     Fetch and display all of the google groups from a given domain
     """
 
-    # adminsdk manager
-    am = AdminManager()
-    # build the service connection
-    service = am.service()
     # group settings manager
     gm = GroupManager()
     # retrieve all groups in the domain
@@ -51,22 +47,16 @@ def search(request):
         form = SearchForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            # create an http client
-            http = httplib2.Http()
-            # space separated list of authorized API scopes for
-            # the service account
-            scope = 'https://www.googleapis.com/auth/apps.groups.settings'
+            email = cd["email"]
 
-            cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+            # group settings manager
+            gm = GroupManager()
 
+            service = gm.service()
             # build the groupsettings service connection
-            x = 1
             try:
-                service = build(
-                    "groupssettings", "v1", http=cred.authorize(http)
-                )
                 group = service.groups().get(
-                    groupUniqueId=cd["email"], alt='json'
+                    groupUniqueId=email, alt='json'
                 ).execute()
             except Exception, e:
                 if e.resp:
