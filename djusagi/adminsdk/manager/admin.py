@@ -11,7 +11,8 @@ class AdminManager(object):
     def __init__(self):
         # scope
         scope =  'https://www.googleapis.com/auth/admin.directory.group '
-        # obtain the admin directory user cred
+        scope +=  'https://www.googleapis.com/auth/admin.directory.user '
+        # obtain the admin directory service account cred
         self.cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
 
     def service(self):
