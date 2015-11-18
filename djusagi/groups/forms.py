@@ -1,7 +1,7 @@
 from django import forms
 
 class SearchForm(forms.Form):
-    email = forms.CharField(
+    email = forms.EmailField(
         label="Email",
         required = True
     )

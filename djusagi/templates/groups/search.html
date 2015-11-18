@@ -1,11 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Search{% endblock %}
+{% block title %}
+    {% if group %}Group Details{% else %}Search for groups{% endif %}
+{% endblock %}
 {% block content %}
 <div class="row">
+    {% if group %}
+    <h1>Group Details</h1>
+    {% else %}
     <h1>Search for groups</h1>
+    {% endif %}
     <div class="col-md-6">
         {% if group %}
-            {% if group == 500 %}
+            {% if group == 500 or group == 401 %}
                 <p>
                     The email address
                     <strong class="green">{{form.email.value}}</strong>
@@ -16,14 +22,19 @@
             {% else %}{% if group == 400 %}
                 <p>
                     The email address
-                    <strong class="green">{{form.email.value}}</strong>
+                    <strong class="green">
+                    {% if form.email.value %}
+                        {{form.email.value}}
+                    {% else %}
+                        {{email}}
+                    {% endif %}
+                    </strong>
                     is not associated with an existing group.
                 </p>
             {% else %}
             <dl>
             <h4 class="green">
-                Group settings for
-                {{form.email.value}}
+                Group settings for {{email}}
             </h4>
             {% for k,v in group.items %}
             <dt>{{k}}</dt>
@@ -32,7 +43,7 @@
             </dl>
             {% endif %}{% endif %}
         {% else %}
-            {% if form.email.value %}
+            {% if form.email.value and not form.errors %}
                 <p>
                     The email address
                     <strong class="green">{{form.email.value}}</strong>

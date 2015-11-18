@@ -40,35 +40,41 @@ def index(request):
 
 
 @group_required(settings.ADMINISTRATORS_GROUP)
-def search(request):
+def details(request):
 
+    members = False
     group = None
+    email = None
+    if request.method == "GET":
+        email = request.GET.get("email")
+
     if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             email = cd["email"]
-
-            # group settings manager
-            gm = GroupManager()
-
-            service = gm.service()
-            # build the groupsettings service connection
-            try:
-                group = service.groups().get(
-                    groupUniqueId=email, alt='json'
-                ).execute()
-            except Exception, e:
-                if e.resp:
-                    group = e.resp.status
-                else:
-                    group = e
     else:
         form = SearchForm()
 
+    if email:
+        # group settings manager
+        gm = GroupManager()
+
+        service = gm.service()
+        # build the groupsettings service connection
+        try:
+            group = service.groups().get(
+                groupUniqueId=email, alt='json'
+            ).execute()
+        except Exception, e:
+            if e.resp:
+                group = e.resp.status
+            else:
+                group = e
+
     return render_to_response(
         'groups/search.html', {
-            'form': form, 'group': group
+            'email':email, 'form': form, 'group': group, 'members': members
         },
         context_instance=RequestContext(request)
     )
