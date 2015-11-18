@@ -73,7 +73,7 @@ def details(request):
                 group = e
 
     return render_to_response(
-        'groups/search.html', {
+        'groups/details.html', {
             'email':email, 'form': form, 'group': group, 'members': members
         },
         context_instance=RequestContext(request)
