@@ -30,6 +30,7 @@ nosetests.xml
 *.p12
 client_secrets.json
 service_account_key.json
+groups.csv
 
 # configurations
 settings.py
