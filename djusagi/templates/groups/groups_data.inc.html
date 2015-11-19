@@ -18,16 +18,16 @@
         {% for g in groups %}
             <tr>
                 <td class="group-name" style="text-align:left;">
-                    {{g.name}}
+                    <a href="mailto:{{g.email}}">{{g.name}}</a>
                 </td>
-                <th>
+                <td>
                     {% if g.owner %}
                     <a href="mailto:{{g.owner.email}}">{{g.owner.email}}</a>
                     {% endif %}
-                </th>
-                <th>
+                </td>
+                <td>
                     <a href="mailto:{{g.email}}">{{g.email}}</a>
-                </th>
+                </td>
                 <td>
                     {{g.settings.whoCanJoin}}
                 </td>
