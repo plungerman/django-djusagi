@@ -18,7 +18,7 @@
         {% for g in groups %}
             <tr>
                 <td class="group-name" style="text-align:left;">
-                    <a href="mailto:{{g.email}}">{{g.name}}</a>
+                    <a href="{% url 'groups_details' %}?email={{g.email}}">{{g.name}}</a>
                 </td>
                 <td>
                     {% if g.owner %}
