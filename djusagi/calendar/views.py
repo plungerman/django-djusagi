@@ -12,7 +12,7 @@ import httplib2
 @login_required
 def index(request):
 
-    email='skirk@carthage.edu'
+    email=settings.DOMAIN_SUPER_USER_EMAIL
     with open(settings.SERVICE_ACCOUNT_KEY) as f:
         private_key = f.read()
 

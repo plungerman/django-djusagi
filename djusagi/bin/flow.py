@@ -34,7 +34,7 @@ directory_service = build('admin', 'directory_v1', http=http)
 
 all_users = []
 page_token = None
-params = {'customer': 'carthage.edu'}
+params = {'customer': settings.CLIENT_DOMAIN}
 
 while True:
   try:
