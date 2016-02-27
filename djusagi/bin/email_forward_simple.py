@@ -19,9 +19,6 @@ from gdata.gauth import OAuth2TokenFromCredentials
 import argparse
 import httplib2
 
-import feedparser
-import untangle
-
 """
 Obtain the refresh token
 """

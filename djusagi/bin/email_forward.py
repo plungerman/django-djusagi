@@ -21,9 +21,6 @@ from gdata.apps.emailsettings.client import EmailSettingsClient
 import argparse
 import httplib2
 
-import feedparser
-import untangle
-
 import logging
 
 logger = logging.getLogger(__name__)

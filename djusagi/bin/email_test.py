@@ -20,8 +20,6 @@ from oauth2client.tools import run
 import argparse
 import httplib2
 
-import feedparser
-import untangle
 import gdata.gauth
 import gdata.apps.emailsettings.client
 
