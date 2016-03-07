@@ -13,7 +13,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 from django.conf import settings
 
 from djusagi.core.utils import get_cred
-from djzbar.api.hr import get_users
+from djzbar.utils.informix import do_sql
 from directory.core import FACULTY_ALPHA
 
 from googleapiclient.discovery import build
@@ -53,7 +53,7 @@ def main():
     for the calendar
     """
 
-    user_list = get_users(FACULTY_ALPHA)
+    user_list = do_sql(FACULTY_ALPHA,key=settings.INFORMIX_DEBUG,earl=EARL)
     cal_dict = { 'id': cid, "hidden": "False" }
     fails = []
     exists = []
