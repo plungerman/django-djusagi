@@ -73,20 +73,21 @@ def main():
         if not page_token:
             break
 
-    service = build(
-        "gmail", "v1", http=credentials.authorize(http)
-    )
-
-    #print "length of user_list: {}".format(len(user_list))
     for user in user_list:
         pmail = user.get('primaryEmail')
         if pmail:
-            aliases = service.users().settings().sendAs().list(userId=pmail).execute()
+            credentials = get_cred(pmail, "gmail.settings.basic")
+            http = httplib2.Http()
+            service = build(
+                "gmail", "v1", http=credentials.authorize(http)
+            )
+            aliases = service.users().settings().sendAs().list(userId=pmail).execute(num_retries=10)
             for alias in aliases.get('sendAs'):
-                print '{}|{}|{}'.format(
-                    user.get('name').get('fullName'),
-                    user.get('primaryEmail'), alias.get('sendAsEmail')
-                )
+                if alias.get('treatAsAlias'):
+                    print '{}|{}|{}'.format(
+                        user.get('name').get('fullName'),
+                        user.get('primaryEmail'), alias.get('sendAsEmail')
+                    )
 
 
 
