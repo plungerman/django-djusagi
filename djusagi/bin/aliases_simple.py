@@ -49,15 +49,15 @@ def main():
     main function
     """
 
-    credentials = get_cred(email, "gmail.settings.basic")
+    credentials = get_cred(email, "admin.directory.user")
     http = httplib2.Http()
+
     service = build(
-        "gmail", "v1", http=credentials.authorize(http)
+        "admin", "directory_v1", http=credentials.authorize(http)
     )
-    aliases = service.users().settings().sendAs().list(userId=email).execute()
-    for alias in aliases.get('sendAs'):
-        if alias.get('treatAsAlias'):
-            print alias
+
+    results = service.users().aliases().list(userKey=email).execute()
+    print results
 
 ######################
 # shell command line

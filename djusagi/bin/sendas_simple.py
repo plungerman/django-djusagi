@@ -49,42 +49,17 @@ def main():
     main function
     """
 
-    credentials = get_cred(email, "admin.directory.user")
+    credentials = get_cred(email, "gmail.settings.basic")
     http = httplib2.Http()
-
     service = build(
-        "admin", "directory_v1", http=credentials.authorize(http)
+        "gmail", "v1", http=credentials.authorize(http)
     )
-
-    user_list = []
-    page_token = None
-    while True:
-        results = service.users().list(
-            domain=email.split('@')[1],
-            maxResults=100,
-            pageToken=page_token,
-            orderBy='familyName', viewType='domain_public'
-        ).execute(num_retries=10)
-
-        for r in results["users"]:
-            user_list.append(r)
-
-        page_token = results.get('nextPageToken')
-        if not page_token:
-            break
-
-    for user in user_list:
-        pmail = user.get('primaryEmail')
-        if pmail:
-            aliases = service.users().aliases().list(userKey=pmail).execute(num_retries=10)
-            if aliases and aliases.get('aliases'):
-                for alias in aliases.get('aliases'):
-                    if alias.get('alias'):
-                        print '{}|{}|{}|{}'.format(
-                            user.get('name').get('familyName'),
-                            user.get('name').get('givenName'),
-                            user.get('primaryEmail'), alias.get('alias')
-                        )
+    aliases = service.users().settings().sendAs().list(
+        userId=email
+    ).execute()
+    for alias in aliases.get('sendAs'):
+        if alias.get('treatAsAlias'):
+            print alias
 
 ######################
 # shell command line
@@ -95,8 +70,7 @@ if __name__ == "__main__":
     email = args.email
     test = args.test
 
-    if test:
-        print args
+    print args
 
     sys.exit(main())
 

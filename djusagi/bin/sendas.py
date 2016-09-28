@@ -64,7 +64,7 @@ def main():
             maxResults=100,
             pageToken=page_token,
             orderBy='familyName', viewType='domain_public'
-        ).execute(num_retries=10)
+        ).execute()
 
         for r in results["users"]:
             user_list.append(r)
@@ -76,15 +76,23 @@ def main():
     for user in user_list:
         pmail = user.get('primaryEmail')
         if pmail:
-            aliases = service.users().aliases().list(userKey=pmail).execute(num_retries=10)
-            if aliases and aliases.get('aliases'):
-                for alias in aliases.get('aliases'):
-                    if alias.get('alias'):
-                        print '{}|{}|{}|{}'.format(
-                            user.get('name').get('familyName'),
-                            user.get('name').get('givenName'),
-                            user.get('primaryEmail'), alias.get('alias')
-                        )
+            credentials = get_cred(pmail, "gmail.settings.basic")
+            http = httplib2.Http()
+            service = build(
+                "gmail", "v1", http=credentials.authorize(http)
+            )
+            aliases = service.users().settings().sendAs().list(
+                userId=pmail
+            ).execute(num_retries=10)
+            for alias in aliases.get('sendAs'):
+                if alias.get('treatAsAlias'):
+                    print '{}|{}|{}|{}'.format(
+                        user.get('name').get('familyName'),
+                        user.get('name').get('givenName'),
+                        user.get('primaryEmail'), alias.get('sendAsEmail')
+                    )
+
+
 
 ######################
 # shell command line
@@ -95,8 +103,7 @@ if __name__ == "__main__":
     email = args.email
     test = args.test
 
-    if test:
-        print args
+    print args
 
     sys.exit(main())
 
