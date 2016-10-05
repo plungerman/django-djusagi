@@ -61,7 +61,7 @@ def main():
     while True:
         results = service.users().list(
             domain=email.split('@')[1],
-            maxResults=100,
+            maxResults=500,
             pageToken=page_token,
             orderBy='familyName', viewType='domain_public'
         ).execute()
@@ -81,17 +81,24 @@ def main():
             service = build(
                 "gmail", "v1", http=credentials.authorize(http)
             )
-            aliases = service.users().settings().sendAs().list(
-                userId=pmail
-            ).execute(num_retries=10)
-            for alias in aliases.get('sendAs'):
-                if alias.get('treatAsAlias'):
-                    print '{}|{}|{}|{}'.format(
-                        user.get('name').get('familyName'),
-                        user.get('name').get('givenName'),
-                        user.get('primaryEmail'), alias.get('sendAsEmail')
-                    )
-
+            try:
+                # sometimes this barfs with 400 server error:
+                # "Mail service not enabled"
+                # not certain why at this moment.
+                aliases = service.users().settings().sendAs().list(
+                    userId=pmail
+                ).execute(num_retries=10)
+                for alias in aliases.get('sendAs'):
+                    #if alias.get('treatAsAlias') and alias.get('verificationStatus')=='accepted':
+                    if alias.get('treatAsAlias'):
+                        print '{}|{}|{}|{}|{}'.format(
+                            user.get('name').get('familyName'),
+                            user.get('name').get('givenName'),
+                            user.get('primaryEmail'), alias.get('sendAsEmail'),
+                            alias.get('verificationStatus')
+                        )
+            except:
+                pass
 
 
 ######################
