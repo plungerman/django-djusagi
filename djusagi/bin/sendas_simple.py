@@ -58,7 +58,7 @@ def main():
         userId=email
     ).execute()
     for alias in aliases.get('sendAs'):
-        if alias.get('treatAsAlias'):
+        if alias.get('treatAsAlias') and alias.get('verificationStatus')=='accepted':
             print alias
 
 ######################
@@ -70,7 +70,8 @@ if __name__ == "__main__":
     email = args.email
     test = args.test
 
-    print args
+    if test:
+        print args
 
     sys.exit(main())
 
