@@ -2,8 +2,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse_lazy
 
-from djzbar.utils.informix import do_sql as do_esql
-
 from googleapiclient.discovery import build
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import SignedJwtAssertionCredentials

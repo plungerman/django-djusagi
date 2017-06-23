@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from googleapiclient.discovery import build
@@ -33,8 +32,7 @@ def index(request):
 
     users = results.get('users', [])
 
-    return render_to_response(
-        'calendar/index.html', {'users': results,},
-        context_instance=RequestContext(request)
+    return render(
+        request, 'calendar/index.html', {'users': results,}
     )
 

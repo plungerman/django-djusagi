@@ -1,15 +1,17 @@
 from django.conf import settings
 from django.views.generic import RedirectView
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+
+from djusagi.emailsettings import views
 
 
-urlpatterns = patterns('djusagi.emailsettings.views',
+urlpatterns = [
     # home
     url(
         r'^$', RedirectView.as_view(url=settings.ROOT_URL)
     ),
     # search
     url(
-        r'^search/$', 'search', name="emailsettings_search"
+        r'^search/$', views.search, name='emailsettings_search'
     ),
-)
+]

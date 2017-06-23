@@ -1,9 +1,8 @@
 from googleapiclient.discovery import build
 
 from django.conf import settings
-from django.template import RequestContext
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from djusagi.core.models import CredentialsModel
@@ -39,8 +38,7 @@ def index(request):
             orderBy='email', viewType='domain_public'
         ).execute()
 
-    return render_to_response(
-        'directory/index.html', {'users': users,},
-        context_instance=RequestContext(request)
+    return render(
+        request, 'directory/index.html', {'users': users,}
     )
 

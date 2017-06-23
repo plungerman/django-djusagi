@@ -1,12 +1,15 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('djusagi.groups.views',
+from djusagi.groups import views
+
+
+urlpatterns = [
     # detail view for list and search
     url(
-        r'^details/$', 'details', name="groups_details"
+        r'^details/$', views.details, name='groups_details'
     ),
     # home
     url(
-        r'^$', 'index', name="groups_home"
+        r'^$', views.index, name='groups_home'
     )
-)
+]

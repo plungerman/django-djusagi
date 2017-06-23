@@ -5,11 +5,10 @@ import httplib2
 from googleapiclient.discovery import build
 
 from django.conf import settings
-from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseBadRequest
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from djusagi.core.models import CredentialsModel
@@ -48,9 +47,8 @@ def index(request):
         ).execute()
         logging.info(activitylist)
 
-    return render_to_response(
-        'plus/index.html', {'activitylist': activitylist,},
-        context_instance=RequestContext(request)
+    return render(
+        request, 'plus/index.html', {'activitylist': activitylist,}
     )
 
 
@@ -61,11 +59,10 @@ def auth_return(request):
     )
     if not val:
         #return  HttpResponseBadRequest()
-        return render_to_response(
-            'core/debug.html', {
+        return render(
+            request, 'core/debug.html', {
                 'req':request.REQUEST,'val':val,'key':settings.SECRET_KEY
-            },
-             context_instance=RequestContext(request)
+            }
         )
     credential = FLOW.step2_exchange(request.REQUEST)
     storage = Storage(CredentialsModel, 'user', request.user, 'credential')

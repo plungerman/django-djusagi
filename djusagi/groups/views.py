@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from djusagi.adminsdk.manager.admin import AdminManager
 from djusagi.groups.manager import GroupManager
@@ -33,9 +32,8 @@ def index(request):
         # fetch the group owner
         group["owner"] = gm.group_owner(group["members"])
 
-    return render_to_response(
-        'groups/home.html', { 'groups': group_list },
-        context_instance=RequestContext(request)
+    return render(
+        request, 'groups/home.html', { 'groups': group_list }
     )
 
 
@@ -72,10 +70,9 @@ def details(request):
             else:
                 group = e
 
-    return render_to_response(
-        'groups/details.html', {
+    return render(
+        request, 'groups/details.html', {
             'email':email, 'form': form, 'group': group, 'members': members
-        },
-        context_instance=RequestContext(request)
+        }
     )
 

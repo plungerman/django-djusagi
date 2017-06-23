@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 from djusagi.core.utils import get_cred
 from djusagi.emailsettings.forms import SearchForm
@@ -40,9 +39,8 @@ def search(request):
     else:
         form = SearchForm()
 
-    return render_to_response(
+    return render(
         'emailsettings/search.html', {
             'form': form, 'forwarding': forwarding,
-        },
-        context_instance=RequestContext(request)
+        }
     )
