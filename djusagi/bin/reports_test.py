@@ -20,9 +20,9 @@ import argparse
 import httplib2
 
 
-"""
+'''
 Shell script...
-"""
+'''
 
 # set up command-line options
 desc = """
@@ -35,19 +35,19 @@ parser.add_argument(
     "-e", "--email",
     required=True,
     help="email address of administrative user",
-    dest="email"
+    dest='email'
 )
 parser.add_argument(
     "--test",
     action='store_true',
     help="Dry run?",
-    dest="test"
+    dest='test'
 )
 
 def main():
-    """
+    '''
     main function
-    """
+    '''
 
     with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
 
@@ -56,9 +56,9 @@ def main():
         credentials = SignedJwtAssertionCredentials(
             json_data['client_email'],
             json_data['private_key'],
-            scope='https://apps-apis.google.com/a/feeds/emailsettings/2.0/',
-            access_type="offline",
-            approval_prompt = "force",
+            scope = 'https://www.googleapis.com/auth/admin.reports.audit.readonly',
+            access_type='offline',
+            approval_prompt = 'force',
             sub=email
         )
 
