@@ -56,7 +56,7 @@ class GroupManager(object):
                 if not page_token:
                     break
             # set cache to expire after 24 hours
-            cache.set(key, groups, 60*60*24)
+            cache.set(key, groups, 86400)
         return groups
 
     def group_settings(self, email):

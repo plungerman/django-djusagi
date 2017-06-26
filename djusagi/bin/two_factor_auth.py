@@ -11,87 +11,54 @@ sys.path.append('/data2/django_third/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
 
 from django.conf import settings
-from djusagi.core.utils import get_cred
 
-from oauth2client.file import Storage
-from googleapiclient.discovery import build
+from djusagi.reports.manager import ReportsManager
 
-from datetime import timedelta
-
-import argparse
-import httplib2
-import datetime
+from djzbar.utils.informix import do_sql
+from directory.core import FACULTY_ALPHA, STAFF_ALPHA
 
 
-SCOPE = 'https://www.googleapis.com/auth/admin.reports.usage.readonly'
-DATE = (datetime.date.today() - timedelta(2)).strftime('%Y-%m-%d')
-
-# set up command-line options
-desc = """
-Accepts as input an email address
-"""
-
-parser = argparse.ArgumentParser(description=desc)
-
-parser.add_argument(
-    "-e", "--email",
-    required=True,
-    help="email address from the domain",
-    dest='email'
-)
-parser.add_argument(
-    "--test",
-    action='store_true',
-    help="Dry run?",
-    dest="test"
-)
-
+EARL = settings.INFORMIX_EARL
 
 def main():
     '''
-    Check if a user has two factor authorization enabled on their account
     '''
 
-    # storage for credentials
-    storage = Storage(settings.STORAGE_FILE)
-    # create an http client
-    http = httplib2.Http()
-
-    # obtain the admin directory user cred
-    users_cred = storage.get()
-    if users_cred is None or users_cred.invalid:
-        users_cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, SCOPE)
-        storage.put(users_cred)
-    else:
-        users_cred.refresh(http)
-
-    # build the service connection
-    service = build(
-        'admin', 'reports_v1', http = users_cred.authorize(http)
+    report_man = ReportsManager(
+        scope='https://www.googleapis.com/auth/admin.reports.usage.readonly'
     )
 
-    results = service.userUsageReport().get(
-        userKey=email,
-        date=DATE,
-        parameters = 'accounts:is_2sv_enrolled,accounts:is_2sv_enforced'
-    ).execute()
+    user_list = do_sql(STAFF_ALPHA, key=settings.INFORMIX_DEBUG, earl=EARL)
 
-    print results
-    print results['usageReports'][0]['parameters'][0]['boolValue']
-    print results['usageReports'][0]['parameters'][1]['boolValue']
+    count = 0
+    email = None
 
+    for u in user_list:
+
+        if u.email != email:
+            try:
+                user = report_man.user_usage(
+                    email=u.email,
+                    parameters='accounts:is_2sv_enrolled'
+                )
+                if user['usageReports'][0]['parameters'][0]['boolValue']:
+                    count += 1
+                    print "{} {}".format(
+                        u.email,
+                        user['usageReports'][0]['parameters'][0]['boolValue']
+                    )
+            except Exception, e:
+                print "error: {}".format(u.email)
+
+        email = u.email
+
+    print count
 
 ######################
 # shell command line
 ######################
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    email = args.email
-    test = args.test
-
-    if test:
-        print args
 
     sys.exit(main())
 
