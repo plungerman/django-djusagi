@@ -53,7 +53,10 @@ def main():
     for the calendar
     """
 
-    user_list = do_sql(FACULTY_ALPHA,key=settings.INFORMIX_DEBUG,earl=EARL)
+    sql = '{} ORDER BY id_rec.lastname, id_rec.firstname'.format(
+        FACULTY_ALPHA
+    )
+    user_list = do_sql(sql, key=settings.INFORMIX_DEBUG, earl=EARL)
     cal_dict = { 'id': cid, "hidden": "False" }
     fails = []
     exists = []

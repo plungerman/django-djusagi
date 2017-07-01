@@ -11,9 +11,10 @@ import httplib2
 
 class ReportsManager(object):
 
-    def __init__(self, scope):
+    def __init__(self, scope, cache=True):
         # obtain the reports user cred
         self.cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+        self.cache = cache
 
     def service(self):
         while True:
@@ -41,18 +42,31 @@ class ReportsManager(object):
         SCOPE: https://www.googleapis.com/auth/admin.reports.usage.readonly
         '''
 
-        # date must be at least two days prior to current date, otherwise
-        # the API will reject that request
-        if not date or date > datetime.date.today() - timedelta(2):
-            date = (datetime.date.today() - timedelta(2)).strftime('%Y-%m-%d')
+        key = "user_usage_{}_{}".format(parameters,email)
 
-        service = self.service()
+        if self.cache:
+            results = cache.get(key)
+        else:
+            results = None
+            cache.delete(key)
 
-        results = service.userUsageReport().get(
-            userKey=email,
-            date=date,
-            parameters = parameters
-        ).execute()
+        if not results:
+            # date must be at least two days prior to current date, otherwise
+            # the API will reject that request
+            if not date or date > datetime.date.today() - timedelta(2):
+                date = (datetime.date.today() - timedelta(2)).strftime(
+                    '%Y-%m-%d'
+                )
+
+            service = self.service()
+
+            results = service.userUsageReport().get(
+                userKey=email,
+                date=date,
+                parameters = parameters
+            ).execute()
+            # set cache to expire after 24 hours
+            cache.set(key, results, 86400)
 
         return results
 

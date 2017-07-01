@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Two Factor Authentication Adoption Rates{% endblock %}
+{% block extra_style %}
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+<style type="text/css">
+  .ct-series-a .ct-area,
+  .ct-series-a .ct-slice-donut-solid,
+  .ct-series-a .ct-slice-pie {fill:#3498db;}
+  .series-a {background-color:#3498db;}
+  .ct-series-b .ct-area,
+  .ct-series-b .ct-slice-donut-solid,
+  .ct-series-b .ct-slice-pie {fill:#85C1E9;}
+  .series-b {background-color:#85c1e9;}
+
+  .ct-series-c .ct-area,
+  .ct-series-c .ct-slice-donut-solid,
+  .ct-series-c .ct-slice-pie {fill:#884ea0;}
+  .series-c {background-color:#884ea0;}
+
+  .ct-series-d .ct-area,
+  .ct-series-d .ct-slice-donut-solid,
+  .ct-series-d .ct-slice-pie {fill:#D7BDE2;}
+  .series-d {background-color:#d7bde2;}
+
+  .ct-series-e .ct-area,
+  .ct-series-e .ct-slice-donut-solid,
+  .ct-series-e .ct-slice-pie {fill:#138D75;}
+  .series-e {background-color:#138d75;}
+
+  .ct-series-f .ct-area,
+  .ct-series-f .ct-slice-donut-solid,
+  .ct-series-f .ct-slice-pie {fill:#A9DFBF;}
+  .series-f {background-color:#a9dfbf;}
+
+  .ct-label{font-size:1.4em;fill:#fff;}
+</style>
+{% endblock %}
+{% block extra_javascript %}
+<script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script type="text/javascript">
+  new Chartist.Pie('.ct-chart', {
+    series: {{data}}
+  }, {
+    donut: true,
+    donutWidth: 60,
+    donutSolid: true,
+    startAngle: 270,
+    showLabel: true
+  });
+</script>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="page-header">
+      Two Factor Authentication
+    </h1>
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+  <div class="col-lg-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Adoption Rate by Group
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body" id="groups-data-panel">
+        <div class="chart">
+          <div>
+            <ul>
+              <li>
+                <span class="series-a">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                <span class="series-b">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                &nbsp; Staff [Total = {{groups.staff}}] {{groups.staff_ave}}% adoption rate
+              </li>
+              <li>
+                <span class="series-c">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                <span class="series-d">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                &nbsp; Facutly [Total = {{groups.faculty}}] {{groups.faculty_ave}}% adoption rate
+              </li>
+              <li>
+                <span class="series-e">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                <span class="series-f">
+                    &nbsp; &nbsp; &nbsp;
+                </span>
+                &nbsp; Students [Total = {{groups.students}}] {{groups.students_ave}}% adoption rate
+              </li>
+            </ul>
+          </div>
+          <div class="ct-chart ct-golden-section ct-negative-labels" style="width:75%"></div>
+        </div>
+        <!-- /.chart -->
+      </div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+  <div class="col-lg-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Adoption Rate by Department
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body" id="groups-data-panel">
+      </div>
+      <!-- /.panel-body -->
+    </div>
+    <!-- /.panel -->
+  </div>
+  <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+{% endblock %}

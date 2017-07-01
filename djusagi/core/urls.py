@@ -32,6 +32,10 @@ urlpatterns = [
     url(
         r'^groups/', include('djusagi.groups.urls')
     ),
+    # groups
+    url(
+        r'^reports/', include('djusagi.reports.urls')
+    ),
     # django auth
     url(
         r'^accounts/login/$',auth_views.login,

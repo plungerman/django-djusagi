@@ -85,6 +85,19 @@ dl dd {
                 <!-- /.nav-second-level -->
             </li>
             <li>
+                <a href="#">
+                    <i class="fa fa-wrench fa-fw"></i>
+                    User Reports<span class="fa arrow"></span>
+                </a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{% url 'two_factor_auth' %}">
+                            Two Factor Auth</a>
+                    </li>
+                </ul>
+                <!-- /.nav-second-level -->
+            </li>
+            <li>
                 <a href="{% url 'emailsettings_search' %}">
                     <i class="fa fa-envelope  fa-fw"></i>
                     Email Settings
