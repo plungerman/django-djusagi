@@ -57,8 +57,9 @@ class ReportsManager(object):
                 date = (
                     datetime.date.today() - timedelta(
                         settings.REPORTS_USER_USAGE_DATE_OFFSET
-                    ).strftime('%Y-%m-%d')
-                )
+                    )
+                ).strftime('%Y-%m-%d')
+
             service = self.service()
 
             results = service.userUsageReport().get(
