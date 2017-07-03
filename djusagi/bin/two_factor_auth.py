@@ -102,13 +102,13 @@ def main():
                     count += 1
                     if test:
                         print "{} {}".format(
-                            u.email,
-                            user['usageReports'][0]['parameters'][0]['boolValue']
+                          u.email,
+                          user['usageReports'][0]['parameters'][0]['boolValue']
                         )
                 total += 1
             except Exception, e:
                 if test:
-                    print "error: {}".format(u.email)
+                    print "[error] {} : {}".format(u.email, e)
                 else:
                     logger.info("{} fail: {}".format(n, email))
 
