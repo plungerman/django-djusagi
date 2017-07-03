@@ -51,13 +51,14 @@ class ReportsManager(object):
             cache.delete(key)
 
         if not results:
-            # date must be at least two days prior to current date, otherwise
+            # date must be at least three days prior to current date, otherwise
             # the API will reject that request
             if not date or date > datetime.date.today() - timedelta(2):
-                date = (datetime.date.today() - timedelta(2)).strftime(
-                    '%Y-%m-%d'
+                date = (
+                    datetime.date.today() - timedelta(
+                        settings.REPORTS_USER_USAGE_DATE_OFFSET
+                    ).strftime('%Y-%m-%d')
                 )
-
             service = self.service()
 
             results = service.userUsageReport().get(
