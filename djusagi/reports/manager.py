@@ -67,8 +67,8 @@ class ReportsManager(object):
                 date=date,
                 parameters = parameters
             ).execute()
-            # set cache to expire after 24 hours
-            cache.set(key, results, 86400)
+            # set cache to expire
+            cache.set(key, results, settings.REPORTS_USER_USAGE_CACHE_EXPIRE)
 
         return results
 
