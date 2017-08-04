@@ -15,7 +15,6 @@ from djusagi.core.utils import get_cred
 
 from oauth2client.file import Storage
 from googleapiclient.discovery import build
-from gdata.gauth import OAuth2TokenFromCredentials
 
 import argparse
 import httplib2
