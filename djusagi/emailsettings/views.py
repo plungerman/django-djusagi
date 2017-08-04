@@ -40,7 +40,7 @@ def search(request):
         form = SearchForm()
 
     return render(
-        'emailsettings/search.html', {
+        request, 'emailsettings/search.html', {
             'form': form, 'forwarding': forwarding,
         }
     )
