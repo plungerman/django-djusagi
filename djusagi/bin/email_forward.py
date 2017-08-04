@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 """
 Test the google api email settings, with the end goal of displaying
-'forwarding' information for any given account
+'forwarding' information for any given account. try: mhamilton1 for POC.
 """
 
 # set up command-line options
