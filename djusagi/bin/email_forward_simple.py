@@ -15,6 +15,7 @@ from django.conf import settings
 from djusagi.core.utils import get_cred
 
 from gdata.gauth import OAuth2TokenFromCredentials
+from gdata.apps.emailsettings.client import EmailSettingsClient
 
 import argparse
 import httplib2
@@ -61,9 +62,7 @@ def main():
     # space separated list of authorized API scopes for this service account
     scope = 'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
     # create our email settings client
-    client = gdata.apps.emailsettings.client.EmailSettingsClient(
-        domain=email.split('@')[1]
-    )
+    client = EmailSettingsClient(domain=email.split('@')[1])
     # obtain our street cred
     credentials = get_cred(email, scope)
     # fetch our access token
@@ -72,7 +71,10 @@ def main():
     auth2token.authorize(client)
 
     forwarding = client.RetrieveForwarding(username=username)
-    print forwarding
+
+    #print forwarding
+    #print forwarding.__dict__
+    print forwarding.property[1].value
 
 ######################
 # shell command line
