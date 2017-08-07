@@ -5,12 +5,6 @@ import os, sys, json
 sys.path.append('/usr/local/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/')
-sys.path.append('/data2/django_1.8/')
-sys.path.append('/data2/django_projects/')
-sys.path.append('/data2/django_third/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
-
-from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
@@ -76,7 +70,9 @@ def main():
     for user in user_list:
         pmail = user.get('primaryEmail')
         if pmail:
-            aliases = service.users().aliases().list(userKey=pmail).execute(num_retries=10)
+            aliases = service.users().aliases().list(userKey=pmail).execute(
+                num_retries=10
+            )
             if aliases and aliases.get('aliases'):
                 for alias in aliases.get('aliases'):
                     if alias.get('alias'):

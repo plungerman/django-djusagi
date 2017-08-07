@@ -1,25 +1,18 @@
 # -*- coding: utf-8 -*-
-import os, sys, json
+import sys
 
 # env
 sys.path.append('/usr/local/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/')
-sys.path.append('/data2/django_1.7/')
-sys.path.append('/data2/django_projects/')
-sys.path.append('/data2/django_third/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
-
-from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
 from gdata.gauth import OAuth2TokenFromCredentials
 from gdata.contacts import client as client_contacts
-from gdata.contacts import data
+from gdata.contacts.client import ContactsQuery
 
 import argparse
-import httplib2
 
 """
 Obtain the refresh token
@@ -27,8 +20,7 @@ Obtain the refresh token
 
 # set up command-line options
 desc = """
-Accepts as input an email address of a google domain super user
-and a domain username e.g. jdoe
+Accepts as input an email address of a google domain user
 """
 
 parser = argparse.ArgumentParser(description=desc)
@@ -36,14 +28,8 @@ parser = argparse.ArgumentParser(description=desc)
 parser.add_argument(
     "-e", "--email",
     required=True,
-    help="email address of administrative user",
+    help="email address of a domain user",
     dest="email"
-)
-parser.add_argument(
-    "--username",
-    required=True,
-    help="username of the account to search",
-    dest="username"
 )
 parser.add_argument(
     "--test",
@@ -65,8 +51,6 @@ def main():
         source='Carthage_College_DJUsagi_ContactsClient'
     )
 
-    #client.ClientLogin(email, password, client.source)
-
     # obtain our street cred
     credentials = get_cred(email, scope)
     # fetch our access token
@@ -76,18 +60,14 @@ def main():
 
     # Note: The special userEmail value default can be used
     # to refer to the authenticated user.
-    earl = 'https://www.google.com/m8/feeds/contacts/default/base/100914520372658838390'
-    #earl = 'https://www.google.com/m8/feeds/contacts/default/full/100914520372658838390'
-    #earl = 'https://www.google.com/m8/feeds/contacts/default/full?q=skirk@carthage.edu&v=3.0'
     #earl = 'https://www.google.com/m8/feeds/contacts/default/full/'
 
-    #contact = client.GetContact(earl)
-    contacts = client.GetContacts()
+    query = ContactsQuery()
+    query.max_results = 10000
 
-    #print contact
-    print contacts
+    contacts = client.GetContacts(q = query)
+
     for i, entry in enumerate(contacts.entry):
-
         try:
             print '\n%s %s' % (i+1, entry.name.full_name.text)
         except:
@@ -117,7 +97,6 @@ def main():
 if __name__ == "__main__":
     args = parser.parse_args()
     email = args.email
-    username = args.username
     test = args.test
 
     if test:

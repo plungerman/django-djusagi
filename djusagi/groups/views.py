@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.shortcuts import render
 
-from djusagi.adminsdk.manager.admin import AdminManager
 from djusagi.groups.manager import GroupManager
 from djusagi.core.utils import get_cred
 from djusagi.groups.forms import SearchForm
