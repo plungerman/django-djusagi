@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-import os, sys, json
+import sys
 
 # env
 sys.path.append('/usr/local/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/')
+
+from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
@@ -20,17 +22,13 @@ and check for aliases
 
 # set up command-line options
 desc = """
-Accepts as input an email address of a google domain super user
+Obtain all aliases from all users in the domain
 """
+
+EMAIL = settings.DOMAIN_SUPER_USER_EMAIL
 
 parser = argparse.ArgumentParser(description=desc)
 
-parser.add_argument(
-    "-e", "--email",
-    required=True,
-    help="email address of user",
-    dest="email"
-)
 parser.add_argument(
     "--test",
     action='store_true',
@@ -43,7 +41,7 @@ def main():
     main function
     """
 
-    credentials = get_cred(email, "admin.directory.user")
+    credentials = get_cred(EMAIL, "admin.directory.user")
     http = httplib2.Http()
 
     service = build(
@@ -54,7 +52,7 @@ def main():
     page_token = None
     while True:
         results = service.users().list(
-            domain=email.split('@')[1],
+            domain=EMAIL.split('@')[1],
             maxResults=100,
             pageToken=page_token,
             orderBy='familyName', viewType='domain_public'
@@ -76,11 +74,11 @@ def main():
             if aliases and aliases.get('aliases'):
                 for alias in aliases.get('aliases'):
                     if alias.get('alias'):
-                        print '{}|{}|{}|{}'.format(
+                        print('{}|{}|{}|{}'.format(
                             user.get('name').get('familyName'),
                             user.get('name').get('givenName'),
                             user.get('primaryEmail'), alias.get('alias')
-                        )
+                        ))
 
 ######################
 # shell command line
@@ -88,11 +86,10 @@ def main():
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    email = args.email
     test = args.test
 
     if test:
-        print args
+        print(args)
 
     sys.exit(main())
 
