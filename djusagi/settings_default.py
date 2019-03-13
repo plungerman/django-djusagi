@@ -28,7 +28,15 @@ SERVICE_ACCOUNT_JSON = os.path.join(
 STORAGE_FILE = os.path.join(
     os.path.dirname(__file__), 'store.dat'
 )
+# DJ Usagi settings
 ADMINISTRATORS_GROUP = ''
+CLIENT_DOMAIN = ''
+REPORTS_USER_USAGE_DATE_OFFSET = 3
+CONTACTS_SOURCE = ''
+CONTACTS_MAX_RESULTS = 10000
+DOMAIN_SUPER_USER_EMAIL = ''
+REPORTS_USER_USAGE_CACHE_EXPIRE = 86400 * 2 # 48 hours
+EMAIL_SETTINGS_BULK_FILENAME='emailsettings.csv'
 # internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'America/Chicago'

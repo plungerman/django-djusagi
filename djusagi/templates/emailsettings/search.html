@@ -4,7 +4,14 @@
 <div class="row">
     <h1>Search for a forwarding address</h1>
     <div class="col-md-6">
-        {% if forwarding %}
+        {% if emails %}
+          {% for e in emails %}
+            {{e}},
+          {% endfor %}
+        {% else %}{% if forwarding %}
+            {% if forwarding == 'Error' %}
+            <h4>There was no data submitted</h4>
+            {% else %}
             <h4>The email address</h4>
             <blockquote>
                 <a href="mailto:{{form.username.value}}@carthage.edu">
@@ -15,6 +22,7 @@
             <blockquote>
                 <a href="mailto:{{forwarding}}">{{forwarding}}</a>
             </blockquote>
+            {% endif %}
         {% else %}{% if form.username.value %}
             <h4>There are no forwarding email addresses established for</h4>
             <blockquote>
@@ -22,8 +30,8 @@
                     {{form.username.value}}@carthage.edu
                 </a>
             </blockquote>
-        {% endif %}{% endif %}
-        {% include "includes/generic_form.html" %}
+        {% endif %}{% endif %}{% endif %}
+        {% include "includes/generic_form_multi.html" %}
     </div>
 </div>
 {% endblock %}
