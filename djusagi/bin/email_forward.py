@@ -6,6 +6,8 @@ sys.path.append('/usr/local/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/dist-packages/')
 sys.path.append('/usr/lib/python2.7/')
 
+from django.conf import settings
+
 from djusagi.core.utils import get_cred
 
 from oauth2client.file import Storage
