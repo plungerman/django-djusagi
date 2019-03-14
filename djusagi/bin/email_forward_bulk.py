@@ -71,13 +71,9 @@ def main():
                         username=r[0].split('@')[0]
                     ).property[1].value
                     if forwarding:
-                        print("{],".format(forwarding))
+                        print("{}|{}".format(r[0], forwarding))
             except:
-                forwarding = None
-
-    #print forwarding
-    #print forwarding.__dict__
-    print forwarding.property[1].value
+                print("{}|Error".format(r[0]))
 
 
 ######################
