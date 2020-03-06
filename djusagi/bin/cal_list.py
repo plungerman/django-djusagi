@@ -48,9 +48,9 @@ def main():
     while True:
         calendar_list = service.calendarList().list(pageToken=page_token).execute()
         for calendar_list_entry in calendar_list['items']:
-            print calendar_list_entry['summary']
-            print calendar_list_entry['accessRole']
-            print calendar_list_entry['id']
+            print('summary{0}'.format(calendar_list_entry['summary']))
+            print('accessRole{0}'.format(calendar_list_entry['accessRole']))
+            print('id{0}'.format(calendar_list_entry['id']))
         page_token = calendar_list.get('nextPageToken')
         if not page_token:
             break
