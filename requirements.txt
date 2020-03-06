@@ -9,3 +9,4 @@ informixdb==2.5
 google-api-python-client==1.4.2
 oauth2client==1.5.1
 gdata==2.0.18
+pycryptodome==3.9.7
