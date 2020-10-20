@@ -1,5 +1,5 @@
 from django.conf import settings
-#from django.contrib import admin
+from django.contrib import admin
 from django.views.generic import RedirectView
 from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
@@ -14,11 +14,6 @@ from djusagi.core import views as core_views
 import os
 
 urlpatterns = [
-    # home
-    url(
-        r'^$', core_views.home,
-        name='home'
-    ),
     # calendar
     url(
         r'^calendar/$', cali_views.index,
@@ -56,7 +51,9 @@ urlpatterns = [
     ),
     url(
         r'^accounts/$', RedirectView.as_view(url=settings.ROOT_URL)
-    )
+    ),
+    # home
+    url(r'^$', core_views.home, name='home'),
 ]
 
 # not ready for prime time
