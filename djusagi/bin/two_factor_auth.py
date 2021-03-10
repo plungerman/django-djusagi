@@ -68,7 +68,7 @@ def main():
     elif who == 'students':
         sql = STUDENTS_ALL
     else:
-        print "--who must be: 'faculty','staff', or 'students'"
+        print("--who must be: 'faculty','staff', or 'students'")
         exit(-1)
 
     sql += ' ORDER BY email'
@@ -95,21 +95,21 @@ def main():
                 if user['usageReports'][0]['parameters'][0]['boolValue']:
                     count += 1
                     if test:
-                        print "{} {}".format(
+                        print("{0} {1}".format(
                           u.email,
-                          user['usageReports'][0]['parameters'][0]['boolValue']
-                        )
+                          user['usageReports'][0]['parameters'][0]['boolValue'],
+                        ))
                 total += 1
             except Exception, e:
                 if test:
-                    print "[error] {} : {}".format(u.email, e)
+                    print("[error] {0} : {1}".format(u.email, e))
                 else:
-                    logger.info("{} fail: {}".format(n, email))
+                    logger.info("fail: {0} {1}".format(u.email, e))
 
         email = u.email
 
     if test:
-        print "{} out of {}".format(count, total)
+        print("{0} out of {1}".format(count, total))
 
 
 ######################
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     cache = args.cache
 
     if test:
-        print args
+        print(args)
 
     sys.exit(main())
 
