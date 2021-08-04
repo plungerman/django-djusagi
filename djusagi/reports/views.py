@@ -4,7 +4,6 @@ from django.shortcuts import render
 from djusagi.reports.manager import ReportsManager
 from djtools.decorators.auth import group_required
 from djzbar.utils.informix import do_sql
-from directory.core import FACULTY_ALPHA, STAFF_ALPHA, STUDENTS_ALL
 
 import collections
 import logging
@@ -26,9 +25,10 @@ def index(request):
 def two_factor_auth(request):
 
     groups = collections.OrderedDict()
-    groups['staff'] = STAFF_ALPHA
-    groups['faculty'] = FACULTY_ALPHA
-    groups['students'] = STUDENTS_ALL
+    sql = 'SELECT * FROM provisioning_vw WHERE '
+    groups['staff'] = '{0} staff IS NOT NULL'.format(sql)
+    groups['faculty'] = '{0} faculty IS NOT NULL'.format(sql)
+    groups['students'] = '{0} student IS NOT NULL'.format(sql)
 
     report_man = ReportsManager(
         scope='https://www.googleapis.com/auth/admin.reports.usage.readonly'
