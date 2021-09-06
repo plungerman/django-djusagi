@@ -9,15 +9,9 @@ from oauth2client.client import SignedJwtAssertionCredentials
 import json
 import httplib2
 
-EARL = settings.INFORMIX_EARL
-
 
 def get_cred(email, scope, service_account=None):
-    """
-    Establishes the proper credentials to access the
-    Google API resource
-    """
-
+    """Establishes the proper credentials to access the Google API resource."""
     if scope[0:4] != "http":
         scope='https://www.googleapis.com/auth/{}'.format(scope),
     if not service_account:

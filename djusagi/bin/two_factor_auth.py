@@ -19,104 +19,102 @@ os.environ['LD_RUN_PATH'] = settings.LD_RUN_PATH
 
 from djusagi.reports.manager import ReportsManager
 
-from djzbar.utils.informix import do_sql
-from directory.core import FACULTY_ALPHA, STAFF_ALPHA, STUDENTS_ALL
+from djimix.core.database import get_connection
+from djimix.core.database import xsql
 
 import argparse
 import logging
 logger = logging.getLogger(__name__)
 
-EARL = settings.INFORMIX_EARL
-
 # set up command-line options
 desc = """
-Accepts as input for parameter "who": faculty, staff, students
-and optional cache flag
+    Accepts as input for parameter "who": faculty, staff, students
+    and optional cache flag
 """
 
 parser = argparse.ArgumentParser(description=desc)
 
 parser.add_argument(
-    "-w", "--who",
+    '-w',
+    '--who',
     required=True,
     help="'faculty','staff', or 'students'",
-    dest='who'
+    dest='who',
 )
 parser.add_argument(
-    "--cache",
+    '--cache',
     action='store_true',
     help="Check the cache first for the results?",
-    dest='cache'
+    dest='cache',
 )
 parser.add_argument(
-    "--test",
+    '--test',
     action='store_true',
     help="Dry run?",
-    dest="test"
+    dest='test',
 )
 
 
 def main():
-    '''
-    who has two-factor authentication enabled?
-    '''
+    """Obtain the data about who has two-factor authentication enabled."""
 
-    if who == 'faculty':
-        sql = FACULTY_ALPHA
-    elif who == 'staff':
-        sql = STAFF_ALPHA
+    if who in {'faculty', 'staff'}:
+        where = '{0} IS NOT NULL'.format(who)
     elif who == 'students':
-        sql = STUDENTS_ALL
+        where = 'student IS NOT NULL and student <> "incoming"'
     else:
         print("--who must be: 'faculty','staff', or 'students'")
         exit(-1)
 
-    sql += ' ORDER BY email'
+    sql = """
+        SELECT
+            id, lastname, firstname,
+            (TRIM(username) || '@carthage.edu') as email
+        FROM
+            provisioning_vw
+        WHERE
+            {0}
+        ORDER BY
+            lastname, firstname
+    """.format(where)
 
     report_man = ReportsManager(
         scope='https://www.googleapis.com/auth/admin.reports.usage.readonly',
         cache=cache
     )
 
-    user_list = do_sql(sql, key=settings.INFORMIX_DEBUG, earl=EARL)
-
     total = 0
     count = 0
     email = None
 
-    for u in user_list:
-
-        if u.email != email:
-            try:
-                user = report_man.user_usage(
-                    email=u.email,
-                    parameters='accounts:is_2sv_enrolled'
-                )
-                if user['usageReports'][0]['parameters'][0]['boolValue']:
-                    count += 1
+    with get_connection() as connection:
+        user_list = xsql(sql, connection)
+        for usr in user_list:
+            if usr[3] != email:
+                try:
+                    user = report_man.user_usage(
+                        email=usr[3],
+                        parameters='accounts:is_2sv_enrolled'
+                    )
+                    if user['usageReports'][0]['parameters'][0]['boolValue']:
+                        count += 1
+                        if test:
+                            print("{0} {1}".format(
+                                usr[3],
+                                user['usageReports'][0]['parameters'][0]['boolValue'],
+                            ))
+                    total += 1
+                except Exception as error:
                     if test:
-                        print("{0} {1}".format(
-                          u.email,
-                          user['usageReports'][0]['parameters'][0]['boolValue'],
-                        ))
-                total += 1
-            except Exception, e:
-                if test:
-                    print("[error] {0} : {1}".format(u.email, e))
-                else:
-                    logger.info("fail: {0} {1}".format(u.email, e))
-
-        email = u.email
-
+                        print("[error] {0} : {1}".format(usr[3], error))
+                    else:
+                        logger.info("fail: {0} {1}".format(usr[3], error))
+            email = usr[3]
     if test:
         print("{0} out of {1}".format(count, total))
 
 
-######################
-# shell command line
-######################
-
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     args = parser.parse_args()
     who = args.who
@@ -127,4 +125,3 @@ if __name__ == "__main__":
         print(args)
 
     sys.exit(main())
-
