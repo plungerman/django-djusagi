@@ -10,7 +10,6 @@ import collections
 import logging
 logger = logging.getLogger(__name__)
 
-EARL = settings.INFORMIX_EARL
 
 @group_required(settings.ADMINISTRATORS_GROUP)
 def index(request):

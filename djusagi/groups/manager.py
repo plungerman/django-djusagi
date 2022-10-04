@@ -31,9 +31,7 @@ class GroupManager(object):
         return service
 
     def groups_list(self):
-        """
-        returns all groups in the domain using the adminsdk api.
-        """
+        """Returns all groups in the domain using the adminsdk api."""
         key = "admin_sdk_groups_list"
         groups = cache.get(key)
         if not groups:
@@ -60,9 +58,7 @@ class GroupManager(object):
         return groups
 
     def group_settings(self, email):
-        """
-        retrieves a group's settings from the groups settings api.
-        """
+        """Retrieves a group's settings from the groups settings api."""
         key = "group_settings_{}".format(email)
         gs = cache.get(key)
         if not gs:
@@ -80,34 +76,36 @@ class GroupManager(object):
         return gs
 
     def group_members(self, email):
-        """
-        retrieves a group's member list from the admin sdk api.
-        """
-        key = "group_members_{}".format(email)
+        """Retrieves a group's member list from the admin sdk api."""
+        key = 'group_members_{0}'.format(email)
         members = cache.get(key)
         if not members:
+            members = []
+            page_token = None
+            # build our members list
             am = AdminManager()
             service = am.service()
             while True:
-                try:
-                    members = service.members().list(
-                        groupKey = email, alt='json'
-                    ).execute()
-                except Exception, e:
-                    pass
-                else:
+                results = service.members().list(
+                    groupKey=email,
+                    alt='json',
+                    maxResults=200,
+                    pageToken=page_token,
+                ).execute()
+                page_token = results.get('nextPageToken')
+                for member in results.get('members'):
+                    members.append(member)
+                if not page_token:
                     break
             cache.set(key, members)
         return members
 
     def group_owner(self, members):
-        """
-        retrieves the owner of a group from the list of group members.
-        """
-        owner = None
-        if members.get("members"):
-            for m in members.get("members"):
-                if m["role"] == "OWNER":
-                    owner = m
+        """Retrieves the owner of a group from the list of group members."""
+        owners = []
+        if members:
+            for member in members:
+                if member['role'] == 'OWNER':
+                    owners.append(member)
                     break
-        return owner
+        return owners

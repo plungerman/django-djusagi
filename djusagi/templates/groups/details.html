@@ -52,6 +52,12 @@
             {% endif %}
         {% endif %}
         {% include "includes/generic_form.html" %}
+        <h2>Group Members</h2>
+        <ol>
+        {% for member in members %}
+        <li>{{member.email}}</li>
+        {% endfor %}
+        </ol>
     </div>
 </div>
 {% endblock %}

@@ -7,7 +7,6 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import SignedJwtAssertionCredentials
 
 import json
-import httplib2
 
 
 def get_cred(email, scope, service_account=None):

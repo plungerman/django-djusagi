@@ -14,10 +14,7 @@ import httplib2
 
 @group_required(settings.ADMINISTRATORS_GROUP)
 def index(request):
-    """
-    Fetch and display all of the google groups from a given domain
-    """
-
+    """Fetch and display all of the google groups from a given domain."""
     # group settings manager
     gm = GroupManager()
     # retrieve all groups in the domain
@@ -38,8 +35,8 @@ def index(request):
 
 @group_required(settings.ADMINISTRATORS_GROUP)
 def details(request):
-
-    members = False
+    """Display google group details."""
+    members = []
     group = None
     email = None
     if request.method == "GET":
@@ -56,7 +53,7 @@ def details(request):
     if email:
         # group settings manager
         gm = GroupManager()
-
+        members = gm.group_members(email)
         service = gm.service()
         # build the groupsettings service connection
         try:
@@ -71,7 +68,10 @@ def details(request):
 
     return render(
         request, 'groups/details.html', {
-            'email':email, 'form': form, 'group': group, 'members': members
+            'email':email,
+            'form': form,
+            'group': group,
+            'members': members,
         }
     )
 

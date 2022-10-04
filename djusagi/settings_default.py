@@ -23,6 +23,11 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 SECRET_KEY = ''
+SERVER_URL = ''
+API_KEY = ''
+API_URL = 'https://{0}/directory/api/'.format(SERVER_URL)
+API_FACSTAFF_URL = '{0}facstaff/alphabetical/csv.txt?api_key={1}'.format(API_URL, API_KEY)
+API_STUDENTS_URL = '{0}student/alphabetical/csv.txt?api_key={1}'.format(API_URL, API_KEY)
 ALLOWED_HOSTS =  ['localhost','127.0.0.1']
 # Google API constants
 CLIENT_SECRETS = os.path.join(
@@ -55,11 +60,10 @@ USE_L10N = False
 USE_TZ = False
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
-SERVER_URL = ""
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ROOT_DIR = os.path.dirname(__file__)
 ROOT_URL = "/djusagi/"
-REDIRECT_URI="https://{}{}oauth2-callback".format(SERVER_URL,ROOT_URL)
+REDIRECT_URI="https://{}{}oauth2-callback".format(SERVER_URL, ROOT_URL)
 ROOT_URLCONF = 'djusagi.core.urls'
 WSGI_APPLICATION = 'djusagi.wsgi.application'
 MEDIA_ROOT = ''
