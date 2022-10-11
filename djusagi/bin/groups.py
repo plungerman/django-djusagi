@@ -44,14 +44,13 @@ def main():
     # reconcile internal data with external data
     internal_emails = []
     for email in response.text.splitlines():
+        result = None
         try:
             member_get = gm.member_get(group, email)
         except Exception:
             if test:
                 print('fetch member failed: {0}.'.format(email))
             member_get = None
-        if member_get:
-            internal_emails.append(email)
         # add to group if not a member
         member_type = 'USER'
         if not member_get:
@@ -59,19 +58,25 @@ def main():
                 member_type = 'EXTERNAL'
             if test:
                 print('adding member: {0}.'.format(email))
-            result = gm.member_insert(group, email, member_type)
-            if test:
+            try:
+                result = gm.member_insert(group, email, member_type)
+            except Exception as error:
+                result = None
+                print('add member failed: {0}.'.format(error))
+            if test and result:
                 print('added member: {0}.'.format(result))
+        internal_emails.append(email.lower())
 
     # retrieve all members in the group
     members = gm.group_members(group)
     # remove members who are not part of internal data set
     for member in members:
+        result = None
         if member['email'] not in internal_emails and member['role'] != 'OWNER':
             if test:
                 print('removing member: {0}.'.format(member))
             try:
-                result = gm.member_delete(group, email)
+                result = gm.member_delete(group, member['email'])
             except Exception:
                 if test:
                     print('delete member failed: {0}.'.format(member))

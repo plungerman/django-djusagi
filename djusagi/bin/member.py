@@ -80,5 +80,6 @@ if __name__ == '__main__':
     test = args.test
     if not settings.MEMBER_SYNC.get(group):
         print('{0} is not a valid group at this time'.format(group))
-        sys.ext(-1)
+        print(settings.MEMBER_SYNC)
+        sys.exit(-1)
     sys.exit(main())

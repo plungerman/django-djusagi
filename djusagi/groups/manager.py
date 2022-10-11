@@ -10,7 +10,10 @@ from googleapiclient.discovery import build
 
 
 class GroupManager(object):
-    """Google groups manager."""
+    """
+    Google groups manager.
+    see: https://developers.google.com/admin-sdk/directory/reference/rest/v1/members
+    """
 
     def __init__(self):
         """Set up scope and auth credentials."""
