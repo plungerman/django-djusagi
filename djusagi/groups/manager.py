@@ -110,8 +110,9 @@ class GroupManager(object):
                     pageToken=page_token,
                 ).execute()
                 page_token = results.get('nextPageToken')
-                for member in results.get('members'):
-                    members.append(member)
+                if results.get('members'):
+                    for member in results.get('members'):
+                        members.append(member)
                 if not page_token:
                     break
             cache.set(key, members)

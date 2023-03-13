@@ -47,3 +47,7 @@ _API Manager_
 https://console.developers.google.com/apis/dashboard?project=groups-settings&duration=PT1H
 
 Create and manage service accounts, enable and disable Google APIs, etc.
+
+_Migrations_
+https://github.com/jhowe-sgs/mailman-to-google-groups
+https://developers.google.com/admin-sdk/groups-migration/v1/guides/manage-email-migrations#group_migration_media_upload
