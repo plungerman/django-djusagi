@@ -35,34 +35,32 @@ def two_factor_auth(request):
     )
     data = []
     for n,v in groups.items():
-        sql = '{} ORDER BY email'.format(v)
+        sql = '{0} ORDER BY username'.format(v)
         total = 0
         count = 0
-        email = None
+        username = None
         with get_connection() as connection:
-            user_list = xsql(sql, connection)
-            for u in user_list:
-                if u.email != email:
+            user_list = xsql(sql, connection).fetchall()
+            for user in user_list:
+                if user[3] != username:
                     try:
-                        user = report_man.user_usage(
-                            email=u.email,
-                            parameters='accounts:is_2sv_enrolled'
+                        member = report_man.user_usage(
+                            email='{0}@carthage.edu'.format(user[3]),
+                            parameters='accounts:is_2sv_enrolled',
                         )
-                        if user['usageReports'][0]['parameters'][0]['boolValue']:
+                        if member['usageReports'][0]['parameters'][0]['boolValue']:
                             count += 1
                         total += 1
                     except Exception, e:
-                        logger.info("{} fail: {}".format(n, email))
-                email = u.email
+                        logger.info("{0} fail: {1}".format(user[3], e))
+                username = user[3]
             groups[n] = total
-            groups['{}_ave'.format(n)] = 100 * count / total
+            groups['{0}_ave'.format(n)] = 100 * count / total
             data.append(count)
             data.append(total - count)
 
     return render(
-        request, 'reports/two_factor_auth.html', {
-            'groups': groups,
-            'data' :data
-        }
+        request,
+        'reports/two_factor_auth.html',
+        {'groups': groups, 'data' :data},
     )
-

@@ -88,30 +88,36 @@ def main():
     email = None
 
     with get_connection() as connection:
-        user_list = xsql(sql, connection)
-        for usr in user_list:
-            if usr[3] != email:
-                try:
-                    user = report_man.user_usage(
-                        email=usr[3],
-                        parameters='accounts:is_2sv_enrolled'
-                    )
-                    if user['usageReports'][0]['parameters'][0]['boolValue']:
-                        count += 1
-                        if test:
-                            print("{0} {1}".format(
-                                usr[3],
-                                user['usageReports'][0]['parameters'][0]['boolValue'],
-                            ))
-                    total += 1
-                except Exception as error:
+        rows = xsql(sql, connection)
+        user_list = rows.fetchall()
+    for usr in user_list:
+        if usr[3] != email:
+            try:
+                user = report_man.user_usage(
+                    email=usr[3],
+                    parameters='accounts:is_2sv_enrolled'
+                )
+                if user['usageReports'][0]['parameters'][0]['boolValue']:
+                    count += 1
                     if test:
-                        print("[error] {0} : {1}".format(usr[3], error))
-                    else:
-                        logger.info("fail: {0} {1}".format(usr[3], error))
+                        print("{0} {1}".format(
+                            usr[3],
+                            user['usageReports'][0]['parameters'][0]['boolValue'],
+                        ))
+                total += 1
+            except Exception as error:
+                if test:
+                    print("[error] {0}".format(error))
+                else:
+                    print("[error] {0}".format(error))
+                    #logger.info("fail: {0}".format(error))
+        try:
             email = usr[3]
-    if test:
-        print("{0} out of {1}".format(count, total))
+        except Exception as error:
+            email = None
+            print("[error] {0}".format(error))
+
+    print("{0} out of {1}".format(count, total))
 
 
 if __name__ == '__main__':
