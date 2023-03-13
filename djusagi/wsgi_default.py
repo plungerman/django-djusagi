@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
+
+"""WSGI configuration."""
+
 import os
-import time
-import traceback
-import signal
 import sys
 
+from django.core.wsgi import get_wsgi_application
+
+
 # python
-sys.path.append('/data2/python_venv/2.7/djusagi/lib/python2.7/')
-sys.path.append('/data2/python_venv/2.7/djusagi/lib/python2.7/site-packages/')
-sys.path.append('/data2/python_venv/2.7/djusagi/lib/django_projects/')
-sys.path.append('/data2/python_venv/2.7/djusagi/lib/django-djusagi/')
+sys.path.append('/d2/python_venv/3.10/djusagi/lib/python3.10/')
+sys.path.append('/d2/python_venv/3.10/djusagi/lib/python3.10/site-packages/')
 # django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djusagi.settings')
-os.environ.setdefault('PYTHON_EGG_CACHE', '')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djusagi.settings.shell')
+os.environ.setdefault('PYTHON_EGG_CACHE', '/var/cache/python/.python-eggs')
 os.environ.setdefault('TZ', 'America/Chicago')
 # informix
 os.environ['INFORMIXSERVER'] = ''
@@ -20,19 +22,9 @@ os.environ['INFORMIXDIR'] = ''
 os.environ['ODBCINI'] = ''
 os.environ['ONCONFIG'] = ''
 os.environ['INFORMIXSQLHOSTS'] = ''
-os.environ['LD_LIBRARY_PATH'] = '$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools:/usr/lib/apache2/modules:$INFORMIXDIR/lib/cli'
-os.environ['LD_RUN_PATH'] = '$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools:/usr/lib/apache2/modules'
+os.environ['LD_LIBRARY_PATH'] = """
+    {0}/lib:{0}/lib/esql:{0}/lib/tools:/usr/lib/apache2/modules:{0}/lib/cli
+""".format(os.environ['INFORMIXDIR'])
+os.environ['LD_RUN_PATH'] = os.environ['LD_LIBRARY_PATH']
 # wsgi
-from django.core.wsgi import get_wsgi_application
-
-# NOTE: remove the try/except in production
-#application = get_wsgi_application()
-try:
-    application = get_wsgi_application()
-except Exception:
-    # Error loading applications
-    if 'mod_wsgi' in sys.modules:
-        traceback.print_exc()
-        os.kill(os.getpid(), signal.SIGINT)
-        time.sleep(2.5)
-    exit(-1)
+application = get_wsgi_application()
