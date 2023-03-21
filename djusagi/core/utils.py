@@ -1,36 +1,22 @@
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
 from django.core.cache import cache
-from django.core.urlresolvers import reverse_lazy
 
 from googleapiclient.discovery import build
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import SignedJwtAssertionCredentials
-
-import json
+from google.oauth2 import service_account
 
 
-def get_cred(email, scope, service_account=None):
+def get_cred(scopes, account=None):
     """Establishes the proper credentials to access the Google API resource."""
-    if scope[0:4] != "http":
-        scope='https://www.googleapis.com/auth/{}'.format(scope),
-    if not service_account:
-        service_account = settings.SERVICE_ACCOUNT_JSON
-    with open(service_account) as json_file:
-        json_data = json.load(json_file)
-        credentials = SignedJwtAssertionCredentials(
-            json_data['client_email'],
-            json_data['private_key'],
-            scope=scope,
-            #access_type="offline",
-            #approval_prompt = "force",
-            token_uri='https://accounts.google.com/o/oauth2/token',
-            sub=email
-        )
-
-    credentials.get_access_token()
-
+    if not account:
+        account = settings.SERVICE_ACCOUNT_JSON
+    credentials = service_account.Credentials.from_service_account_file(
+        account,
+        scopes=scopes,
+        subject=settings.DOMAIN_USER_EMAIL,
+    )
     return credentials
-
 
 
 def get_group(email, http):
@@ -65,7 +51,9 @@ def get_groups(service):
         cache.set("admin_sdk_group_list", group_list, 60*60*24)
     return group_list
 
-
+'''
+from oauth2client.client import flow_from_clientsecrets
+from django.urls import reverse_lazy
 def get_flow(scope):
     redirect = "https://{}{}".format(
         settings.SERVER_URL, reverse_lazy("oauth2_callback")
@@ -74,5 +62,4 @@ def get_flow(scope):
         scope='https://www.googleapis.com/auth/{}'.format(scope),
         redirect_uri=redirect
     )
-
-
+'''

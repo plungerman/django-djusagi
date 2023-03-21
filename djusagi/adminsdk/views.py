@@ -1,19 +1,19 @@
-from googleapiclient.discovery import build
+# -*- coding: utf-8 -*-
+
+import os
+import logging
+import httplib2
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-
 from djusagi.core.models import CredentialsModel
-from djusagi.core.views import get_flow
-
+from djusagi.core.utils import get_flow
+from googleapiclient.discovery import build
 from oauth2client import xsrfutil
 from oauth2client.django_orm import Storage
 
-import os
-import logging
-import httplib2
 
 @login_required
 def index(request):
@@ -41,4 +41,3 @@ def index(request):
     return render(
         request, 'directory/index.html', {'users': users,}
     )
-

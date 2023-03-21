@@ -9,7 +9,7 @@ from djusagi.adminsdk.manager.admin import AdminManager
 from googleapiclient.discovery import build
 
 
-class GroupManager(object):
+class GroupManager:
     """
     Google groups manager.
     see: https://developers.google.com/admin-sdk/directory/reference/rest/v1/members
@@ -18,20 +18,29 @@ class GroupManager(object):
     def __init__(self):
         """Set up scope and auth credentials."""
         # scope
-        scope = 'https://www.googleapis.com/auth/apps.groups.settings'
+        scopes = [
+            #'https://www.googleapis.com/auth/admin.directory.user',
+            #'https://www.googleapis.com/auth/admin.directory.user.security',
+            #'https://www.googleapis.com/auth/apps.groups.settings',
+            'https://www.googleapis.com/auth/admin.directory.group',
+            'https://www.googleapis.com/auth/admin.directory.group.member',
+            #'https://www.googleapis.com/auth/admin.directory.group.security',
+        ]
         # obtain the admin directory user cred
-        self.cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+        self.cred = get_cred(scopes)
 
     def service(self):
         """Establish the sevice connection."""
         while True:
             try:
                 service = build(
-                    "groupssettings", "v1",
-                    http=self.cred.authorize(httplib2.Http())
+                    u'groupsettings',
+                    u'directory_v1',
+                    credentials=self.cred(),
                 )
-            except Exception, e:
-                pass
+
+            except Exception as error:
+                print(error)
             else:
                 break
 
@@ -73,9 +82,10 @@ class GroupManager(object):
             while True:
                 try:
                     gs = service.groups().get(
-                        groupUniqueId = email, alt='json'
+                        groupUniqueId=email,
+                        alt='json',
                     ).execute()
-                except Exception, e:
+                except Exception as error:
                     pass
                 else:
                     break

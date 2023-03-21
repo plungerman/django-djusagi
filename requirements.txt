@@ -7,7 +7,6 @@ django-localflavor
 django-loginas
 django-taggit
 fontawesomefree
-gdata
 google-api-python-client
 google-auth
 mysqlclient

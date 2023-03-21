@@ -71,4 +71,3 @@ class ReportsManager(object):
             cache.set(key, results, settings.REPORTS_USER_USAGE_CACHE_EXPIRE)
 
         return results
-

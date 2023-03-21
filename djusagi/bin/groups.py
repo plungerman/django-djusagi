@@ -44,6 +44,8 @@ def main():
     # reconcile internal data with external data
     internal_emails = []
     for email in response.text.splitlines():
+        if test:
+            print('fetch member: {0}.'.format(email))
         result = None
         try:
             member_get = gm.member_get(group, email)
@@ -62,7 +64,7 @@ def main():
                 result = gm.member_insert(group, email, member_type)
             except Exception as error:
                 result = None
-                print('add member failed: {0}.'.format(error))
+                print('add member failed for: {0}\n{1}.'.format(email, error))
             if test and result:
                 print('added member: {0}.'.format(result))
         internal_emails.append(email.lower())

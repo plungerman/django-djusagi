@@ -80,10 +80,10 @@ INSTALLED_APPS = (
     # apps
     #'djusagi',
     'djusagi.core',
-    'djusagi.emailsettings',
+    #'djusagi.emailsettings',
     'djusagi.groups',
     #'djusagi.plus',
-    'djusagi.reports'
+    'djusagi.reports',
     # needed for template tags
     'djtools',
     # honeypot for admin attacks
@@ -207,7 +207,7 @@ CLIENT_DOMAIN = ''
 REPORTS_USER_USAGE_DATE_OFFSET = 3
 CONTACTS_SOURCE = ''
 CONTACTS_MAX_RESULTS = 10000
-DOMAIN_SUPER_USER_EMAIL = ''
+DOMAIN_USER_EMAIL = ''
 REPORTS_USER_USAGE_CACHE_EXPIRE = 86400 * 2 # 48 hours
 EMAIL_SETTINGS_BULK_FILENAME = ''
 # logging

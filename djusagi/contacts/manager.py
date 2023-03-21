@@ -1,24 +1,24 @@
+# -*- coding: utf-8 -*-
+
+import argparse
+import datetime
+import httplib2
+
 from django.conf import settings
 from django.core.cache import cache
-
 from djusagi.core.utils import get_cred
-from googleapiclient.discovery import build
-from datetime import  timedelta
-
 from gdata.gauth import OAuth2TokenFromCredentials
 from gdata.contacts import client as client_contacts
 from gdata.contacts.client import ContactsQuery
+from googleapiclient.discovery import build
 
-import argparse
-import httplib2
-import datetime
 
-class ContactsManager(object):
+class ContactsManager:
 
     def __init__(self, email, cache=True):
         # obtain our street cred
-        scope = 'https://www.google.com/m8/feeds/'
-        credentials = get_cred(email, scope)
+        scopes = ['https://www.google.com/m8/feeds/']
+        credentials = get_cred(email, scopes)
         # initialise the client with an ad-hoc name
         self.client = client_contacts.ContactsClient(
             source=settings.CONTACTS_SOURCE

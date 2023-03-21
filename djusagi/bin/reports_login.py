@@ -116,7 +116,7 @@ if __name__ == "__main__":
     test = args.test
 
     if test:
-        print args
+        print(args)
 
     sys.exit(main())
 

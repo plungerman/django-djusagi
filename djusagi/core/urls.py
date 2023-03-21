@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
 from django.contrib import admin
 from django.views.generic import RedirectView
-from django.conf.urls import include, url
+from django.urls import include, url
 from django.contrib.auth import views as auth_views
 from django.views import static
 
 from djauth.views import loggedout
 
-from djusagi.calendar import views as cali_views
+from djusagi.kalendar import views as cali_views
 from djusagi.core import views as core_views
 #from djusagi.plus import views as plus_views
 
@@ -15,22 +17,22 @@ import os
 
 urlpatterns = [
     # calendar
-    url(
-        r'^calendar/$', cali_views.index,
-        name='calendar_home'
-    ),
+    #url(
+        #r'^calendar/$', cali_views.index,
+        #name='calendar_home'
+    #),
     # emailsettings
-    url(
-        r'^emailsettings/', include('djusagi.emailsettings.urls')
-    ),
+    #url(
+        #r'^emailsettings/', include('djusagi.emailsettings.urls')
+    #),
     # groups
     url(
         r'^groups/', include('djusagi.groups.urls')
     ),
     # groups
-    url(
-        r'^reports/', include('djusagi.reports.urls')
-    ),
+    #url(
+        #r'^reports/', include('djusagi.reports.urls')
+    #),
     # django auth
     url(
         r'^accounts/login/$',auth_views.login,

@@ -1,29 +1,39 @@
+# -*- coding: utf-8 -*-
+
 from django.conf import settings
-
 from djusagi.core.utils import get_cred
-
 from googleapiclient.discovery import build
 
-import httplib2
 
-class AdminManager(object):
+class AdminManager:
+    """Google admin manager class."""
 
     def __init__(self):
-        # scope
-        scope =  'https://www.googleapis.com/auth/admin.directory.group '
-        scope +=  'https://www.googleapis.com/auth/admin.directory.user '
+        """Obtain credentials from the API."""
+        scopes = [
+            #'https://www.googleapis.com/auth/apps.groups.settings',
+            #'https://www.googleapis.com/auth/admin.directory.group',
+            #'https://www.googleapis.com/auth/admin.directory.group.member',
+            #'https://www.googleapis.com/auth/admin.directory.group.security',
+            'https://www.googleapis.com/auth/admin.directory.user',
+            'https://www.googleapis.com/auth/admin.directory.group',
+            'https://www.googleapis.com/auth/admin.directory.group.member',
+
+        ]
+
         # obtain the admin directory service account cred
-        self.cred = get_cred(settings.DOMAIN_SUPER_USER_EMAIL, scope)
+        self.cred = get_cred(scopes)
 
     def service(self):
         while True:
             try:
                 service = build(
-                    "admin", "directory_v1",
-                    http=self.cred.authorize(httplib2.Http())
+                    u'admin',
+                    u'directory_v1',
+                    credentials=self.cred,
                 )
-            except Exception, e:
-                pass
+            except Exception as error:
+                print(error)
             else:
                 break
 
