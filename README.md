@@ -51,3 +51,18 @@ Create and manage service accounts, enable and disable Google APIs, etc.
 _Migrations_
 https://github.com/jhowe-sgs/mailman-to-google-groups
 https://developers.google.com/admin-sdk/groups-migration/v1/guides/manage-email-migrations#group_migration_media_upload
+
+_crontab_
+# google groups sync
+20 02 * * * DJANGO_SETTINGS_MODULE=djusagi.settings.shell ; export DJANGO_SETTINGS_MODULE; (cd /data2/python_venv/3.8/djusagi/ && . bin/activate && bin/python /data2/python_venv/3.8/djusagi/djusagi/bin/groups.py --group=students@carthage.edu --test 2>&1 | mail -s "[DJ Usagi] faculty-staff mailing list group sync" larry@carthage.edu) >> /dev/null 2>&1
+20 04 * * * DJANGO_SETTINGS_MODULE=djusagi.settings.shell ; export DJANGO_SETTINGS_MODULE; (cd /data2/python_venv/3.8/djusagi/ && . bin/activate && bin/python /data2/python_venv/3.8/djusagi/djusagi/bin/groups.py --group=faculty-staff@carthage.edu --test 2>&1 | mail -s "[DJ Usagi] faculty-staff mailing list group sync" larry@carthage.edu) >> /dev/null 2>&1
+_old crontab_
+# google api user reports caching
+00 01 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/two_factor_auth.py --who=faculty 2>&1 | mail -s "[djusagi] 2 factor auth caching" larry@carthage.edu) >> /dev/null 2>&1
+00 02 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/two_factor_auth.py --who=staff 2>&1 | mail -s "[djusagi] 2 factor auth caching" larry@carthage.edu) >> /dev/null 2>&1
+00 03 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/two_factor_auth.py --who=students 2>&1 | mail -s "[djusagi] 2 factor auth caching" larry@carthage.edu) >> /dev/null 2>&1
+# google api groups caching
+00 04 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/dir_groups_list.py > djusagi/groups.csv) >> /dev/null 2>&1
+# groups sync for facstaff and students
+00 01 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/groups.py --group=students@carthage.edu  --test | mail -s "[djusagi] groups sync: students" larry@carthage.edu) >> /dev/null 2>&1
+00 02 * * * (cd /data2/python_venv/2.7/djusagi/ && . bin/activate && bin/python djusagi/bin/groups.py --group=facstaff@carthage.edu  --test | mail -s "[djusagi] groups sync: students" larry@carthage.edu) >> /dev/null 2>&1
