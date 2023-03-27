@@ -3,13 +3,13 @@
 from django.conf import settings
 from django.contrib import admin
 from django.views.generic import RedirectView
-from django.urls import include, url
+from django.urls import include
+from django.urls import path
+from django.urls import re_path
 from django.contrib.auth import views as auth_views
 from django.views import static
-
 from djauth.views import loggedout
-
-from djusagi.kalendar import views as cali_views
+#from djusagi.kalendar import views as cali_views
 from djusagi.core import views as core_views
 #from djusagi.plus import views as plus_views
 
@@ -17,45 +17,35 @@ import os
 
 urlpatterns = [
     # calendar
-    #url(
-        #r'^calendar/$', cali_views.index,
-        #name='calendar_home'
-    #),
+    #path('calendar/', cali_views.index, name='calendar_home'),
     # emailsettings
-    #url(
-        #r'^emailsettings/', include('djusagi.emailsettings.urls')
-    #),
+    #path(#'emailsettings/', include('djusagi.emailsettings.urls')),
     # groups
-    url(
-        r'^groups/', include('djusagi.groups.urls')
-    ),
+    path('groups/', include('djusagi.groups.urls')),
     # groups
-    #url(
-        #r'^reports/', include('djusagi.reports.urls')
-    #),
+    #path('reports/', include('djusagi.reports.urls')),
     # django auth
-    url(
-        r'^accounts/login/$',auth_views.login,
-        {'template_name': 'accounts/login.html'},
-        name='auth_login'
+    #path(
+        #'accounts/login/',
+        #auth_views.login,
+        #{'template_name': 'accounts/login.html'},
+        #name='auth_login',
+    #),
+    #path(
+        #'accounts/logout/',
+        #auth_views.logout,
+        #{'next_page': '{0}accounts/loggedout/'.format(settings.ROOT_URL)},
+        #name='auth_logout',
+    #),
+    path(
+        'accounts/loggedout/',
+        loggedout,
+        {'template_name': 'accounts/logged_out.html'},
+        name='auth_loggedout',
     ),
-    url(
-        r'^accounts/logout/$',
-        auth_views.logout,{
-            'next_page': '{}accounts/loggedout/'.format(settings.ROOT_URL)
-        },
-        name='auth_logout'
-    ),
-    url(
-        r'^accounts/loggedout/$',
-        loggedout,{'template_name': 'accounts/logged_out.html'},
-        name='auth_loggedout'
-    ),
-    url(
-        r'^accounts/$', RedirectView.as_view(url=settings.ROOT_URL)
-    ),
+    path('accounts/', RedirectView.as_view(url=settings.ROOT_URL)),
     # home
-    url(r'^$', core_views.home, name='home'),
+    path('', core_views.home, name='home'),
 ]
 
 # not ready for prime time

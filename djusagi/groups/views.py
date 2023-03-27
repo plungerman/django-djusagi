@@ -60,11 +60,11 @@ def details(request):
             group = service.groups().get(
                 groupUniqueId=email, alt='json'
             ).execute()
-        except Exception, e:
-            if e.resp:
-                group = e.resp.status
+        except Exception as error:
+            if error.resp:
+                group = error.resp.status
             else:
-                group = e
+                group = error
 
     return render(
         request, 'groups/details.html', {

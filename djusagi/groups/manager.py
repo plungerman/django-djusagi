@@ -105,7 +105,6 @@ class GroupManager:
     def group_members(self, email):
         """Retrieves a group's member list from the admin sdk api."""
         key = 'group_members_{0}'.format(email)
-        members = cache.get(key)
         if not members:
             members = []
             page_token = None
@@ -125,7 +124,6 @@ class GroupManager:
                         members.append(member)
                 if not page_token:
                     break
-            cache.set(key, members)
         return members
 
     def member_has(self, group, email):
