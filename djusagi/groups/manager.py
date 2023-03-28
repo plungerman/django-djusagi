@@ -105,25 +105,24 @@ class GroupManager:
     def group_members(self, email):
         """Retrieves a group's member list from the admin sdk api."""
         key = 'group_members_{0}'.format(email)
-        if not members:
-            members = []
-            page_token = None
-            # build our members list
-            am = AdminManager()
-            service = am.service()
-            while True:
-                results = service.members().list(
-                    groupKey=email,
-                    alt='json',
-                    maxResults=200,
-                    pageToken=page_token,
-                ).execute()
-                page_token = results.get('nextPageToken')
-                if results.get('members'):
-                    for member in results.get('members'):
-                        members.append(member)
-                if not page_token:
-                    break
+        members = []
+        page_token = None
+        # build our members list
+        am = AdminManager()
+        service = am.service()
+        while True:
+            results = service.members().list(
+                groupKey=email,
+                alt='json',
+                maxResults=200,
+                pageToken=page_token,
+            ).execute()
+            page_token = results.get('nextPageToken')
+            if results.get('members'):
+                for member in results.get('members'):
+                    members.append(member)
+            if not page_token:
+                break
         return members
 
     def member_has(self, group, email):
