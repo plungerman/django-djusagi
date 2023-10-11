@@ -1,15 +1,14 @@
-django==3.2.18
-django-admin-honeypot
+django==4.2.5
 django-bootstrap5
 django-countries
 django-informixdb
 django-localflavor
-django-loginas
 django-taggit
 fontawesomefree
 google-api-python-client
 google-auth
 mysqlclient
+pymemcache
 pyodbc
 python-ldap
 python-memcached
