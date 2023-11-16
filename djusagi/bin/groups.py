@@ -4,10 +4,6 @@ import argparse
 import requests
 import sys
 
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/')
-
 from django.conf import settings
 from djusagi.groups.manager import GroupManager
 
@@ -31,7 +27,7 @@ parser.add_argument(
 
 
 def main():
-    """Maintain facstaff group members."""
+    """Maintain google group members."""
     # group settings manager
     gm = GroupManager()
 
@@ -45,7 +41,7 @@ def main():
     internal_emails = []
     for email in response.text.splitlines():
         if test:
-            print('fetch member: {0}.'.format(email))
+            print('fetch member: {0}'.format(email))
         result = None
         try:
             member_get = gm.member_get(group, email)

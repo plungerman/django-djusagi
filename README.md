@@ -3,26 +3,41 @@ Dashboard manager for Google APIs
 
 _Comma separated list of scopes for the service account_
 
-http://www.google.com/m8/feeds,
-https://apps-apis.google.com/a/feeds/emailsettings/2.0/,
-https://mail.google.com/,
-https://spreadsheets.google.com/feeds,
-https://www.googleapis.com/auth/admin.directory.group,
-https://www.googleapis.com/auth/admin.directory.group.member,
-https://www.googleapis.com/auth/admin.directory.orgunit,
-https://www.googleapis.com/auth/admin.directory.user,
-https://www.googleapis.com/auth/admin.directory.user.alias,
-https://www.googleapis.com/auth/admin.directory.user.readonly,
-https://www.googleapis.com/auth/admin.directory.user.security,
-https://www.googleapis.com/auth/admin.reports.audit.readonly,
-https://www.googleapis.com/auth/admin.reports.usage.readonly,
-https://www.googleapis.com/auth/apps.groups.settings,
-https://www.googleapis.com/auth/calendar,
-https://www.googleapis.com/auth/gmail.modify,
-https://www.googleapis.com/auth/gmail.readonly,
-https://www.googleapis.com/auth/gmail.settings.basic,
-https://www.googleapis.com/auth/gmail.settings.sharing,
+https://www.googleapis.com/auth/contacts
+https://apps-apis.google.com/a/feeds/emailsettings/2.0/
+https://mail.google.com/
+https://www.googleapis.com/auth/spreadsheets
+https://www.googleapis.com/auth/admin.directory.group
+https://www.googleapis.com/auth/admin.directory.group.member
+https://www.googleapis.com/auth/admin.directory.orgunit
+https://www.googleapis.com/auth/admin.directory.user
+https://www.googleapis.com/auth/admin.directory.user.alias
+https://www.googleapis.com/auth/admin.directory.user.readonly
+https://www.googleapis.com/auth/admin.directory.user.security
+https://www.googleapis.com/auth/admin.reports.audit.readonly
+https://www.googleapis.com/auth/admin.reports.usage.readonly
+https://www.googleapis.com/auth/apps.groups.settings
+https://www.googleapis.com/auth/calendar
+https://www.googleapis.com/auth/gmail.modify
+https://www.googleapis.com/auth/gmail.readonly
+https://www.googleapis.com/auth/gmail.settings.basic
+https://www.googleapis.com/auth/gmail.settings.sharing
 https://www.googleapis.com/auth/contacts.readonly
+https://apps-apis.google.com/a/feeds/groups/
+https://apps-apis.google.com/a/feeds/domain/
+
+
+the service account is technically not even part of the domain, and it cannot access data on its own;
+it needs to impersonate an account that has access, so you have to impersonate an regular account with
+admin privileges if you want to use Admin SDK. see:
+
+https://stackoverflow.com/questions/64657836/not-authorized-to-access-this-resource-api-gcp
+
+we store the email address of the admin user in the following constant:
+
+DOMAIN_USER_EMAIL
+
+for the admin user we impersonate.
 
 _admin console_
 

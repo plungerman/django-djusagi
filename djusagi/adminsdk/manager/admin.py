@@ -11,14 +11,13 @@ class AdminManager:
     def __init__(self):
         """Obtain credentials from the API."""
         scopes = [
-            #'https://www.googleapis.com/auth/apps.groups.settings',
-            #'https://www.googleapis.com/auth/admin.directory.group',
-            #'https://www.googleapis.com/auth/admin.directory.group.member',
-            #'https://www.googleapis.com/auth/admin.directory.group.security',
             'https://www.googleapis.com/auth/admin.directory.user',
+            'https://www.googleapis.com/auth/admin.directory.user.security',
+            'https://www.googleapis.com/auth/apps.groups.settings',
             'https://www.googleapis.com/auth/admin.directory.group',
             'https://www.googleapis.com/auth/admin.directory.group.member',
-
+            'https://apps-apis.google.com/a/feeds/domain/',
+            'https://apps-apis.google.com/a/feeds/groups/',
         ]
 
         # obtain the admin directory service account cred

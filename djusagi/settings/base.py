@@ -86,14 +86,10 @@ INSTALLED_APPS = (
     'djusagi.reports',
     # needed for template tags
     'djtools',
-    # honeypot for admin attacks
-    'admin_honeypot',
     # django bootstrap 5
     'django_bootstrap5',
     # fontawesome 6
     'fontawesomefree',
-    # sign in as a user
-    'loginas',
     # tagging package
     'taggit',
 )
@@ -134,7 +130,7 @@ TEMPLATES = [
 # caching
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
         'LOCATION': '127.0.0.1:11211',
         'TIMEOUT': 24*60*60,
         #'TIMEOUT': 604800,
