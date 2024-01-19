@@ -31,7 +31,7 @@ def main():
     # group settings manager
     gm = GroupManager()
 
-    # retrieve all facstaff email from internal data source
+    # retrieve all emails from internal data source
     response = requests.get(
         settings.MEMBER_SYNC[group],
         headers={'Cache-Control': 'no-cache'},

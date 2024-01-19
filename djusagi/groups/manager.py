@@ -6,6 +6,8 @@ from django.conf import settings
 from django.core.cache import cache
 from djusagi.core.utils import get_cred
 from djusagi.adminsdk.manager.admin import AdminManager
+from oauth2client.file import Storage
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 
@@ -29,23 +31,44 @@ class GroupManager:
         ]
         # obtain the admin directory user cred
         self.cred = get_cred(scopes)
+        #self.cred_admin = get_cred(scopes, account=settings.STORAGE_FILE)
 
     def service(self):
         """Establish the sevice connection."""
+        scopes = [
+            'https://www.googleapis.com/auth/admin.directory.user',
+            'https://www.googleapis.com/auth/admin.directory.user.security',
+            'https://www.googleapis.com/auth/apps.groups.settings',
+            'https://www.googleapis.com/auth/admin.directory.group',
+            'https://www.googleapis.com/auth/admin.directory.group.member',
+            'https://apps-apis.google.com/a/feeds/domain/',
+            'https://apps-apis.google.com/a/feeds/groups/',
+        ]
         while True:
             try:
                 service = build(
-                    u'groupsettings',
-                    u'directory_v1',
-                    credentials=self.cred(),
+                    'groupsettings',
+                    #'directory_v1',
+                    'v1',
+                    #credentials=self.cred(),
+                    credentials=self.cred,
+                    #credentials=self.cred_admin,
                 )
-
             except Exception as error:
-                print(error)
+                print('error = {0}'.format(error))
             else:
                 break
 
         return service
+
+    def groups_get(self, email):
+        am = AdminManager()
+        service = am.service()
+        group = service.groups().get(
+            groupKey=email,
+            alt='json',
+        ).execute()
+        return group
 
     def groups_list(self):
         """Returns all groups in the domain using the adminsdk api."""
@@ -59,7 +82,7 @@ class GroupManager:
             service = am.service()
             while True:
                 results = service.groups().list(
-                    domain=settings.DOMAIN_SUPER_USER_EMAIL.split('@')[1],
+                    domain=settings.DOMAIN_USER_EMAIL.split('@')[1],
                     maxResults=500,
                     pageToken=page_token
                 ).execute()
@@ -76,21 +99,22 @@ class GroupManager:
 
     def group_settings(self, email):
         """Retrieves a group's settings from the groups settings api."""
-        key = "group_settings_{}".format(email)
-        gs = cache.get(key)
+        #key = 'group_settings_{0}'.format(email)
+        #gs = cache.get(key)
+        gs = False
         if not gs:
             service = self.service()
-            while True:
-                try:
-                    gs = service.groups().get(
-                        groupUniqueId=email,
-                        alt='json',
-                    ).execute()
-                except Exception as error:
-                    pass
-                else:
-                    break
-            cache.set(key, gs)
+            gs = service.groups().get(
+                groupUniqueId=email,
+                alt='json',
+            ).execute()
+            #while True:
+                #try:
+                #except Exception as error:
+                    #pass
+                #else:
+                    #break
+            #cache.set(key, gs)
         return gs
 
     def group_owner(self, members):

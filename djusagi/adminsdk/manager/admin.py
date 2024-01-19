@@ -27,8 +27,8 @@ class AdminManager:
         while True:
             try:
                 service = build(
-                    u'admin',
-                    u'directory_v1',
+                    'admin',
+                    'directory_v1',
                     credentials=self.cred,
                 )
             except Exception as error:

@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 import os, sys
 
-# env
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/')
-
 from djusagi.core.utils import get_cred
 
 from googleapiclient.discovery import build
@@ -13,9 +8,6 @@ from googleapiclient.discovery import build
 import argparse
 import httplib2
 
-"""
-Fetch all users from the Google API for a given domain
-"""
 
 # set up command-line options
 desc = """
@@ -38,10 +30,7 @@ parser.add_argument(
 )
 
 def main():
-    """
-    main function
-    """
-
+    """Fetch all users from the Google API for a given domain."""
     credentials = get_cred(email, "admin.directory.user")
     http = httplib2.Http()
 
@@ -66,14 +55,10 @@ def main():
         if not page_token:
             break
 
-    print "length of user_list: {}".format(len(user_list))
+    print("length of user_list: {0}").format(len(user_list))
     for user in user_list:
-        print user["primaryEmail"]
-        #print user
-
-######################
-# shell command line
-######################
+        print(user["primaryEmail"])
+        #print(user)
 
 if __name__ == "__main__":
     args = parser.parse_args()

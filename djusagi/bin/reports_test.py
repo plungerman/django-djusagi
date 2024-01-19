@@ -1,28 +1,16 @@
 # -*- coding: utf-8 -*-
 import os, sys, json
 
-# env
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/')
-sys.path.append('/data2/django_1.11/')
-sys.path.append('/data2/django_projects/')
-sys.path.append('/data2/django_third/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djusagi.settings")
-
 from django.conf import settings
 
 from googleapiclient.discovery import build
-from oauth2client.client import SignedJwtAssertionCredentials
+#from oauth2client.client import SignedJwtAssertionCredentials
+from oauth2client.service_account import ServiceAccountCredentials
 from oauth2client.file import Storage
 
 import argparse
 import httplib2
 
-
-'''
-Shell script...
-'''
 
 # set up command-line options
 desc = """
@@ -44,52 +32,67 @@ parser.add_argument(
     dest='test'
 )
 
+SCOPES = [
+    'https://www.googleapis.com/auth/admin.directory.user',
+    'https://www.googleapis.com/auth/admin.directory.user.security',
+    'https://www.googleapis.com/auth/apps.groups.settings',
+    'https://www.googleapis.com/auth/admin.directory.group',
+    'https://www.googleapis.com/auth/admin.directory.group.member',
+    'https://apps-apis.google.com/a/feeds/domain/',
+    'https://apps-apis.google.com/a/feeds/groups/',
+]
+
+
 def main():
-    '''
-    main function
-    '''
+    global email
 
     with open(settings.SERVICE_ACCOUNT_JSON) as json_file:
 
         json_data = json.load(json_file)
         #print json_data
-        credentials = SignedJwtAssertionCredentials(
+        #credentials = SignedJwtAssertionCredentials(
+        credentials = ServiceAccountCredentials(
             json_data['client_email'],
             json_data['private_key'],
-            scope = 'https://www.googleapis.com/auth/admin.reports.audit.readonly',
+            scope = SCOPES,
             access_type='offline',
             approval_prompt = 'force',
             sub=email
         )
-
     storage = Storage(settings.STORAGE_FILE)
-
+    print(storage.__dict__)
     storage.put(credentials)
     #credentials = storage.get()
-    credentials.get_access_token()
+    #credentials.get_access_token()
 
-    if test:
-        print credentials.__dict__
-        #print credentials.access_token
+    print(credentials.__dict__)
+    print(credentials.access_token)
 
+    service = build("groupssettings", "v1", credentials=credentials)
+    email = 'faculty-staff@carthage.edu'
+    #gs = service.groups().get(groupKey=email)
+    gs = service.groups().get(groupUniqueId=email).execute()
+    print(gs.__dict__)
+    '''
+    group_list = service.groups.list()
+    # cycle through the groups
+    for group in group_list:
+        print(group)
+    gs = service.groups().get(
+        groupKey=email,
+        alt='json',
+    ).execute()
     http = httplib2.Http()
     auth = credentials.authorize(http)
     # refresh does not seem to work
     credentials.refresh(http)
-    print credentials.__dict__
+    print(credentials.__dict__)
+    '''
 
-
-######################
-# shell command line
-######################
 
 if __name__ == "__main__":
     args = parser.parse_args()
     email = args.email
     test = args.test
 
-    #if test:
-    #    print args
-
     sys.exit(main())
-

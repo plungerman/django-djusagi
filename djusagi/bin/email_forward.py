@@ -2,30 +2,18 @@
 import os, sys
 
 # env
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/')
-
 from django.conf import settings
 
 from djusagi.core.utils import get_cred
 
 from oauth2client.file import Storage
 from googleapiclient.discovery import build
-from gdata.gauth import OAuth2TokenFromCredentials
-from gdata.apps.emailsettings.client import EmailSettingsClient
+#from gdata.gauth import OAuth2TokenFromCredentials
+#from gdata.apps.emailsettings.client import EmailSettingsClient
 
 import argparse
 import httplib2
 
-import logging
-
-logger = logging.getLogger(__name__)
-
-"""
-Test the google api email settings, with the end goal of displaying
-'forwarding' information for any given account. try: mhamilton1 for POC.
-"""
 
 # set up command-line options
 desc = """
@@ -57,30 +45,15 @@ parser.add_argument(
 
 def main():
     """
-    main function
+    Test the google api email settings, with the end goal of displaying
+    'forwarding' information for any given account. try: mhamilton1 for POC.
     """
 
     global username
     global email
     global client
 
-    if username:
-
-        scope = 'https://apps-apis.google.com/a/feeds/emailsettings/2.0/'
-        credentials = get_cred(email, scope)
-
-        auth2token = OAuth2TokenFromCredentials(credentials)
-
-        # create our email settings client
-        client = EmailSettingsClient( domain=email.split('@')[1])
-        auth2token.authorize(client)
-
-        forwarding = client.RetrieveForwarding(username=username)
-
-        #print forwarding
-        #print forwarding.__dict__
-        print forwarding.property[1].value
-    else:
+    if True:
         # storage for credentials
         storage = Storage(settings.STORAGE_FILE)
         # create an http client
@@ -118,8 +91,8 @@ def main():
             if not page_token:
                 break
 
-        print "length of user_list: {}".format(len(user_list))
-
+        print("length of user_list: {}".format(len(user_list)))
+        '''
         # we cycle through all of the users and fetch their
         # email settings, looking for the forwardTo key
         for users in user_list:
@@ -139,29 +112,23 @@ def main():
                 try:
                     forwarding = client.RetrieveForwarding(username=username)
                     if forwarding.property[1].value:
-                        print "{}|{}|{}|{}".format(
+                        print("{}|{}|{}|{}".format(
                             family_name, given_name, pmail,
                             forwarding.property[1].value
-                        )
-                except Exception, e:
-                    logger.debug("{}|{}|{}|{}".format(
+                        ))
+                except Exception as error:
+                    print(("{0}|{1}|{2}|{3}".format(
                         family_name, given_name, pmail,
-                        str(e)
-                    ))
+                        str(error)
+                    )))
+        '''
 
-
-######################
-# shell command line
-######################
 
 if __name__ == "__main__":
     args = parser.parse_args()
     email = args.email
     username = args.username
     test = args.test
-
-    if test:
-        print args
 
     sys.exit(main())
 
