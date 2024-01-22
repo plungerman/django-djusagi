@@ -16,13 +16,19 @@ parser.add_argument(
     '-g', '--group',
     required=True,
     help='email address of group',
-    dest='group'
+    dest='group',
 )
 parser.add_argument(
     '--test',
     action='store_true',
     help='Dry run?',
-    dest='test'
+    dest='test',
+)
+parser.add_argument(
+    '--reconcile',
+    action='store_true',
+    help='Dry run?',
+    dest='reconcile',
 )
 
 
@@ -68,23 +74,25 @@ def main():
     # retrieve all members in the group
     members = gm.group_members(group)
     # remove members who are not part of internal data set
-    for member in members:
-        result = None
-        if member['email'] not in internal_emails and member['role'] != 'OWNER':
-            if test:
-                print('removing member: {0}.'.format(member))
-            try:
-                result = gm.member_delete(group, member['email'])
-            except Exception:
+    if reconcile:
+        for member in members:
+            result = None
+            if member['email'] not in internal_emails and member['role'] != 'OWNER':
                 if test:
-                    print('delete member failed: {0}.'.format(member))
-            if test and result:
-                print('deleted member: {0}.'.format(result))
+                    print('removing member: {0}.'.format(member))
+                try:
+                    result = gm.member_delete(group, member['email'])
+                except Exception:
+                    if test:
+                        print('delete member failed: {0}.'.format(member))
+                if test and result:
+                    print('deleted member: {0}.'.format(result))
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
     group = args.group
+    reconcile = args.reconcile
     test = args.test
     if not settings.MEMBER_SYNC[group]:
         print('{0} is not a valid group at this time'.format(group))
