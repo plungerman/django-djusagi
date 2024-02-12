@@ -8,6 +8,7 @@ fontawesomefree
 google-api-python-client
 google-auth
 mysqlclient
+oauth2client
 pymemcache
 pyodbc
 python-ldap
