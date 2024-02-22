@@ -50,16 +50,18 @@ def main():
         groupUniqueId=group,
         alt='json',
     ).execute()
-    print(gs['whoCanLeaveGroup'])
 
-    body = {
-        'whoCanLeaveGroup': 'NONE_CAN_LEAVE',
-    }
-    response = service.groups().update(
-        groupUniqueId=group,
-        body=body,
-    ).execute()
-    print(response)
+    if test:
+        print(gs['whoCanLeaveGroup'])
+    else:
+        body = {
+            'whoCanLeaveGroup': 'NONE_CAN_LEAVE',
+        }
+        response = service.groups().update(
+            groupUniqueId=group,
+            body=body,
+        ).execute()
+        print(response)
 
 
 if __name__ == '__main__':
