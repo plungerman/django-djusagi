@@ -195,6 +195,9 @@ SERVICE_ACCOUNT_KEY = os.path.join(
 SERVICE_ACCOUNT_JSON = os.path.join(
     os.path.dirname(__file__), '',
 )
+GMAIL_SERVICE_ACCOUNT_JSON = os.path.join(
+    os.path.dirname(__file__), '',
+)
 STORAGE_FILE = os.path.join(
     os.path.dirname(__file__), '',
 )
