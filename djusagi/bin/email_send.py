@@ -67,7 +67,7 @@ def main():
     try:
         message = (service.users().messages().send(userId='me', body=create_message).execute())
         print(F'sent message to {message} Message Id: {message["id"]}')
-    except HTTPError as error:
+    except HttpError as error:
         print(F'An error occurred: {error}')
         message = None
 

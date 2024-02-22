@@ -31,19 +31,13 @@ parser.add_argument(
 
 def main():
     """Send an email to an email address through google API."""
-    scopes = ["https://www.googleapis.com/auth/gmail.send",]
-    account = settings.GMAIL_SERVICE_ACCOUNT_JSON
     frum = settings.DEFAULT_FROM_EMAIL
-
-    if test:
-        print(account)
-        print(frum)
-
     message = render_to_string('test_email.html', {'data': 'boo'})
     mail_subject = '[Gmail API] Vinz Clortho, Keymaster of Gozer'
     mail = EmailMessage(
         mail_subject,
-        message, frum,
+        message,
+        frum,
         to=[email],
         reply_to=[settings.ADMINS[0][1]],
     )
