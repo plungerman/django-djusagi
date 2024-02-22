@@ -90,6 +90,8 @@ INSTALLED_APPS = (
     'django_bootstrap5',
     # fontawesome 6
     'fontawesomefree',
+    # gmail api for send mail
+    'gmailapi_backend',
     # tagging package
     'taggit',
 )
