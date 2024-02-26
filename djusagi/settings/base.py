@@ -209,13 +209,8 @@ EMAIL_FROM = ''
 GMAIL_USER = ''
 EMAIL_BACKEND = 'gmailapi_backend.service.GmailApiBackend'
 GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-GMAIL_SERVICE_ACCOUNT_JSON = os.path.join(
-    BASE_DIR,
-    '',
-)
-with open(GMAIL_SERVICE_ACCOUNT_JSON) as phile:
-    GOOGLE_SERVICE_ACCOUNT = phile.read()
-
+GMAIL_SERVICE_ACCOUNT_JSON = ''
+GOOGLE_SERVICE_ACCOUNT = ''
 # logging
 LOG_FILEPATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs/',
