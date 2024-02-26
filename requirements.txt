@@ -1,6 +1,7 @@
 django==4.2.10
 django-bootstrap5
 django-countries
+django-gmailapi-json-backend
 django-informixdb
 django-localflavor
 django-taggit

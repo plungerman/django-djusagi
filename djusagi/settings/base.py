@@ -90,6 +90,8 @@ INSTALLED_APPS = (
     'django_bootstrap5',
     # fontawesome 6
     'fontawesomefree',
+    # gmail api for send mail
+    'gmailapi_backend',
     # tagging package
     'taggit',
 )
@@ -202,6 +204,18 @@ CONTACTS_MAX_RESULTS = 10000
 DOMAIN_USER_EMAIL = ''
 REPORTS_USER_USAGE_CACHE_EXPIRE = 86400 * 2 # 48 hours
 EMAIL_SETTINGS_BULK_FILENAME = ''
+# gmail API settings
+EMAIL_FROM = ''
+GMAIL_USER = ''
+EMAIL_BACKEND = 'gmailapi_backend.service.GmailApiBackend'
+GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+GMAIL_SERVICE_ACCOUNT_JSON = os.path.join(
+    BASE_DIR,
+    '',
+)
+with open(GMAIL_SERVICE_ACCOUNT_JSON) as phile:
+    GOOGLE_SERVICE_ACCOUNT = phile.read()
+
 # logging
 LOG_FILEPATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs/',

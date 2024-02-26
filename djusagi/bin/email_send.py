@@ -9,7 +9,6 @@ from email.mime.text import MIMEText
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from requests import HTTPError
 
 
 # set up command-line options
@@ -68,7 +67,7 @@ def main():
     try:
         message = (service.users().messages().send(userId='me', body=create_message).execute())
         print(F'sent message to {message} Message Id: {message["id"]}')
-    except HTTPError as error:
+    except HttpError as error:
         print(F'An error occurred: {error}')
         message = None
 
