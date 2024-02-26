@@ -186,21 +186,13 @@ SERVER_EMAIL = ''
 SERVER_MAIL = ''
 # app specific settings
 SUMMERNOTE_THEME = 'bs4'
-CLIENT_SECRETS = os.path.join(
-    os.path.dirname(__file__), '',
-)
-SERVICE_ACCOUNT_KEY = os.path.join(
-    os.path.dirname(__file__), '',
-)
-SERVICE_ACCOUNT_JSON = os.path.join(
-    os.path.dirname(__file__), '',
-)
-GMAIL_SERVICE_ACCOUNT_JSON = os.path.join(
-    os.path.dirname(__file__), '',
-)
-STORAGE_FILE = os.path.join(
-    os.path.dirname(__file__), '',
-)
+# google api auth keys
+CLIENT_SECRETS = ''
+SERVICE_ACCOUNT_KEY = ''
+SERVICE_ACCOUNT_JSON = ''
+GMAIL_SERVICE_ACCOUNT_JSON = ''
+STORAGE_FILE = ''
+# google api misc
 REDIRECT_URI = ''
 ADMINISTRATORS_GROUP = ''
 CLIENT_DOMAIN = ''
