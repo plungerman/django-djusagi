@@ -2,7 +2,6 @@ django==4.2.15
 django-bootstrap5
 django-countries
 django-gmailapi-json-backend
-django-informixdb
 django-localflavor
 django-taggit
 fontawesomefree
